@@ -15,8 +15,8 @@ local Window = Fluent:CreateWindow({
 })
 
 -- Hide default buttons
-CloseButton.Visible = false
-MaximizeButton.Visible = false
+-- CloseButton.Visible = false
+-- MaximizeButton.Visible = false
 
 -- Create custom button
 local CustomButton = Instance.new("ImageLabel")
@@ -38,17 +38,19 @@ CustomButtonText.TextSize = 14
 
 -- Connect custom button click event
 CustomButtonText.MouseButton1Click:Connect(function()
-    if Window.Visible then
-        Window:Close()
+    if Window.MinimizeKey then
+        Window.MinimizeKey = false
+        -- Window:Minimize() -- если вы хотите свернуть окно
     else
-        Window:Show()
+        Window.MinimizeKey = Enum.KeyCode.LeftControl
+        -- Window:Restore() -- если вы хотите восстановить окно
     end
 end)
 
 -- Close window if minimized
-if Window.Minimized then
-    Window:Close()
-end
+-- if Window.Minimized then
+--     Window:Close()
+-- end
 
 -- Add tabs and buttons
 local Debugs = Window:AddTab({
