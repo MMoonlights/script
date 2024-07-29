@@ -14,18 +14,17 @@ local Window = Fluent:CreateWindow({
 	MinimizeKey = Enum.KeyCode.LeftControl
 })
 
-local Discord = Window:AddTab({
-	Title = "Discords",
-	Icon = "globe"
-})
+local Icon = Instance.new("ImageButton")
+Icon.Image = "https://cdn.discordapp.com/attachments/1244621082611159108/1267406320798273577/5260ded7-81c2-461f-aba0-8572ab397da2-1.jpg?ex=66a8ab9e&is=66a75a1e&hm=0bb584e3491f5cf1fbddc7aa2e5757e5a22ea18f97226df4b7e1ade1f8b5b344&"
+Icon.Size = UDim2.fromOffset(50, 50)
+Icon.Position = UDim2.fromOffset(10, 10)
+Icon.Parent = game.StarterGui.ScreenGui
 
-Discord:AddButton({
-	Title = "Discord Invite",
-	Description = "Copies Discord invite link",
-	Callback = function()
-		setclipboard("https://discord.gg/your-invite-link")
-	end
-})
+local function OpenMenu()
+	Window:Show()
+end
+
+Icon.MouseButton1Click:Connect(OpenMenu)
 
 local Debugs = Window:AddTab({
 	Title = "Debuggers",
