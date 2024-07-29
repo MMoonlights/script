@@ -1,99 +1,92 @@
-local UserInputService = game:GetService("UserInputService")
-local IsOnMobile = table.find({
-    Enum.Platform.IOS,
-    Enum.Platform.Android
-}, UserInputService:GetPlatform()) ~= nil
+-- Mobile UI Library for Roblox Executor
 
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-local Window = Fluent:CreateWindow({
-    Title = "Debuggers",
-    TabWidth = 160,
-    Size = UDim2.fromOffset(580, 460),
-    Acrylic = false,
-    Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.LeftControl
-})
+-- Create the main UI elements
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local MenuButton = Instance.new("ImageButton")
+local MenuFrame = Instance.new("Frame")
 
--- Hide default buttons
--- CloseButton.Visible = false
--- MaximizeButton.Visible = false
+-- Set properties for ScreenGui
+ScreenGui.Name = "MobileUILibrary"
+ScreenGui.Parent = game.CoreGui
 
--- Create custom button
-local CustomButton = Instance.new("ImageLabel")
-CustomButton.Image = "http://www.roblox.com/asset/?id=5597086202"
-CustomButton.Size = UDim2.fromOffset(20, 20)
-CustomButton.Position = UDim2.fromOffset(10, 10)
-CustomButton.Parent = Window.Frame
+-- Set properties for MainFrame
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0, 50, 0, 50)
+MainFrame.Size = UDim2.new(0, 300, 0, 400)
+MainFrame.Visible = false
 
-local CustomButtonText = Instance.new("TextButton")
-CustomButtonText.Text = "•••"
-CustomButtonText.Size = UDim2.fromOffset(30, 20)
-CustomButtonText.Position = UDim2.fromOffset(10, 10)
-CustomButtonText.Parent = Window.Frame
-CustomButtonText.BackgroundTransparency = 1
-CustomButtonText.ZIndex = 2
-CustomButtonText.Font = Enum.Font.SourceSansBold
-CustomButtonText.TextColor3 = Color3.new(1, 1, 1)
-CustomButtonText.TextSize = 14
+-- Set properties for MenuButton
+MenuButton.Name = "MenuButton"
+MenuButton.Parent = ScreenGui
+MenuButton.BackgroundTransparency = 1
+MenuButton.Position = UDim2.new(0, 10, 0, 10)
+MenuButton.Size = UDim2.new(0, 50, 0, 50)
+MenuButton.Image = "rbxassetid://YOUR_ICON_ID" -- Replace with your icon ID
 
--- Connect custom button click event
-CustomButtonText.MouseButton1Click:Connect(function()
-    if Window.MinimizeKey then
-        Window.MinimizeKey = false
-        -- Window:Minimize() -- Uncomment to minimize window
-    else
-        Window.MinimizeKey = Enum.KeyCode.LeftControl
-        -- Window:Restore() -- Uncomment to restore window
-    end
+-- Set properties for MenuFrame
+MenuFrame.Name = "MenuFrame"
+MenuFrame.Parent = MainFrame
+MenuFrame.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
+MenuFrame.BorderSizePixel = 0
+MenuFrame.Position = UDim2.new(0, 0, 0, 0)
+MenuFrame.Size = UDim2.new(1, 0, 1, 0)
+
+-- Function to toggle the menu
+local function toggleMenu()
+    MainFrame.Visible = not MainFrame.Visible
+end
+
+MenuButton.MouseButton1Click:Connect(toggleMenu)
+
+-- Add a sample button to the menu
+local SampleButton = Instance.new("TextButton")
+SampleButton.Name = "SampleButton"
+SampleButton.Parent = MenuFrame
+SampleButton.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+SampleButton.BorderSizePixel = 0
+SampleButton.Position = UDim2.new(0.1, 0, 0.1, 0)
+SampleButton.Size = UDim2.new(0.8, 0, 0.1, 0)
+SampleButton.Font = Enum.Font.SourceSans
+SampleButton.Text = "Sample Button"
+SampleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SampleButton.TextSize = 24
+
+-- Function for SampleButton
+SampleButton.MouseButton1Click:Connect(function()
+    print("Sample button clicked")
 end)
 
--- Add tabs and buttons
-local Debugs = Window:AddTab({
-    Title = "Debuggers",
-    Icon = "globe"
-})
-
-Debugs:AddButton({
-    Title = "IY",
-    Description = "Helps with noclip and faster actions",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-    end
-})
-
-Debugs:AddButton({
-    Title = "Dex",
-    Description = "Explorer",
-    Callback = function()
-        if IsOnMobile then
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/Dex/Mobile%20Dex%20Explorer.txt"))()
-        else
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-        end
-    end
-})
-
-Debugs:AddButton({
-    Title = "SimpleSpy V3",
-    Description = "Logs Remotes, you may get kicked if they have good AC or namecall detection",
-    Callback = function()
-        if IsOnMobile then
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/SimpleSpyV3/mobilemain.lua"))()
-        else
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()
-        end
-    end
-})
-
-Debugs:AddButton({
-    Title = "Game Tool Giver",
-    Description = "Gives you tools from the game",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/GameToolGiver.lua"))()
-    end
-})
-
--- Ensure window is not closed on mobile
-if IsOnMobile then
-    Window:Restore()
+-- Function to add more buttons/icons
+local function addButton(name, text, iconId, position, size, callback)
+    local button = Instance.new("ImageButton")
+    button.Name = name
+    button.Parent = MenuFrame
+    button.BackgroundTransparency = 1
+    button.Position = position
+    button.Size = size
+    button.Image = "rbxassetid://"..iconId -- Replace with your icon ID
+    button.MouseButton1Click:Connect(callback)
+    
+    local buttonText = Instance.new("TextLabel")
+    buttonText.Name = name.."Text"
+    buttonText.Parent = button
+    buttonText.BackgroundTransparency = 1
+    buttonText.Size = UDim2.new(1, 0, 1, 0)
+    buttonText.Font = Enum.Font.SourceSans
+    buttonText.Text = text
+    buttonText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    buttonText.TextSize = 14
 end
+
+-- Example usage of addButton
+addButton("SpyButton", "Open Spy", "YOUR_ICON_ID", UDim2.new(0.1, 0, 0.25, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+    print("Spy button clicked")
+end)
+
+-- Add additional UI elements and loaders as needed
+-- Ensure to replace "YOUR_ICON_ID" with the actual ID of the icons you are using
+
