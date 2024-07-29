@@ -1,4 +1,4 @@
--- Mobile UI Library for Roblox Executor
+-- Mobile UI Library for Client-Sided Executor
 
 -- Create the main UI elements
 local ScreenGui = Instance.new("ScreenGui")
@@ -8,7 +8,7 @@ local MenuFrame = Instance.new("Frame")
 
 -- Set properties for ScreenGui
 ScreenGui.Name = "MobileUILibrary"
-ScreenGui.Parent = game.CoreGui
+ScreenGui.Parent = game:GetService("CoreGui")
 
 -- Set properties for MainFrame
 MainFrame.Name = "MainFrame"
@@ -25,7 +25,7 @@ MenuButton.Parent = ScreenGui
 MenuButton.BackgroundTransparency = 1
 MenuButton.Position = UDim2.new(0, 10, 0, 10)
 MenuButton.Size = UDim2.new(0, 50, 0, 50)
-MenuButton.Image = "rbxassetid://YOUR_ICON_ID" -- Replace with your icon ID
+MenuButton.Image = "rbxassetid://5597086202" -- Replace with your icon ID
 
 -- Set properties for MenuFrame
 MenuFrame.Name = "MenuFrame"
@@ -68,7 +68,7 @@ local function addButton(name, text, iconId, position, size, callback)
     button.BackgroundTransparency = 1
     button.Position = position
     button.Size = size
-    button.Image = "rbxassetid://"..iconId -- Replace with your icon ID
+    button.Image = "rbxassetid://5597086202" -- Replace with your icon ID
     button.MouseButton1Click:Connect(callback)
     
     local buttonText = Instance.new("TextLabel")
@@ -83,10 +83,13 @@ local function addButton(name, text, iconId, position, size, callback)
 end
 
 -- Example usage of addButton
-addButton("SpyButton", "Open Spy", "YOUR_ICON_ID", UDim2.new(0.1, 0, 0.25, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+addButton("SpyButton", "Open Spy", "5597086202", UDim2.new(0.1, 0, 0.25, 0), UDim2.new(0.8, 0, 0.1, 0), function()
     print("Spy button clicked")
+    -- Insert code to load SimpleSpyMobile or other loaders
 end)
 
 -- Add additional UI elements and loaders as needed
 -- Ensure to replace "YOUR_ICON_ID" with the actual ID of the icons you are using
 
+-- Add the UI to the player's screen
+ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
