@@ -14,17 +14,43 @@ local Window = Fluent:CreateWindow({
 	MinimizeKey = Enum.KeyCode.LeftControl
 })
 
-local Icon = Instance.new("ImageButton")
-Icon.Image = "https://cdn.discordapp.com/attachments/1244621082611159108/1267406320798273577/5260ded7-81c2-461f-aba0-8572ab397da2-1.jpg?ex=66a8ab9e&is=66a75a1e&hm=0bb584e3491f5cf1fbddc7aa2e5757e5a22ea18f97226df4b7e1ade1f8b5b344&"
-Icon.Size = UDim2.fromOffset(50, 50)
-Icon.Position = UDim2.fromOffset(10, 10)
-Icon.Parent = game.StarterGui.ScreenGui
+-- Hide the CloseButton and MaximizeButton of the Fluent window
+CloseButton.Visible = false
+MaximizeButton.Visible = false
 
-local function OpenMenu()
-	Window:Show()
+-- Add a new ImageLabel and TextButton to serve as the custom open/close button
+local CustomButton = Instance.new("ImageLabel")
+CustomButton.Image = "http://www.roblox.com/asset/?id=5597086202"
+CustomButton.Size = UDim2.fromOffset(20, 20)
+CustomButton.Position = UDim2.fromOffset(560, 10)
+CustomButton.Parent = Window.Frame
+
+local CustomButtonText = Instance.new("TextButton")
+CustomButtonText.Text = "•••"
+CustomButtonText.Size = UDim2.fromOffset(30, 20)
+CustomButtonText.Position = UDim2.fromOffset(560, 10)
+CustomButtonText.Parent = Window.Frame
+CustomButtonText.BackgroundTransparency = 1
+CustomButtonText.ZIndex = 2
+CustomButtonText.Font = Enum.Font.SourceSansBold
+CustomButtonText.TextColor3 = Color3.new(1, 1, 1)
+CustomButtonText.TextSize = 14
+
+-- Connect the MouseButton1Click event of the custom open/close button
+CustomButtonText.MouseButton1Click:Connect(function()
+	if Window.Visible then
+		Window:Close()
+	else
+		Window:Show()
+	end
+end)
+
+-- If the window is minimized, immediately close it
+if Window.Minimized then
+	Window:Close()
 end
 
-Icon.MouseButton1Click:Connect(OpenMenu)
+-- Add your tabs and buttons here
 
 local Debugs = Window:AddTab({
 	Title = "Debuggers",
@@ -65,41 +91,10 @@ Debugs:AddButton({
 
 Debugs:AddButton({
 	Title = "Game Tool Giver",
-	Description = "A GUI that gives you tools found in the game by putting it in your backpack.",
+	Description = "Gives you tools from the game",
 	Callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gametoolgiver.lua"))()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/GameToolGiver.lua"))()
 	end
 })
 
-Debugs:AddButton({
-	Title = "Game Tool Equipper",
-	Description = "A GUI that equips the tool found in the game.",
-	Callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gametoolequipper.lua"))()
-	end
-})
-
-Debugs:AddButton({
-	Title = "Game UI/Frame Viewer",
-	Description = "A GUI that allows you to toggle and see hidden guis found in the game.",
-	Callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gameuigiver.lua"))()
-	end
-})
-
-Debugs:AddInput({
-	Title = "GUI Stealer",
-	Default = "Put name of gui u want to convert must be screengui",
-	Placeholder = "Put name of gui u want to convert must be screengui",
-	Numeric = false, -- Only allows numbers
-	Finished = false, -- Only calls callback when you press enter
-	Callback = function(Value)
-		local UIPath
-		for i,v in pairs(game:GetDescendants()) do
-			if v.Name == Value and v:IsA("ScreenGui") then
-				UIPath = v
-			end
-		end
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/debugnation/main/decompilers%20and%20debugging/guistealer.txt"))()
-	end
-})
+Window:Show()
