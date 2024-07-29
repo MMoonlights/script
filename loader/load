@@ -1,0 +1,100 @@
+local UserInputService = game:GetService("UserInputService")
+local IsOnMobile = table.find({
+    Enum.Platform.IOS,
+    Enum.Platform.Android
+}, UserInputService:GetPlatform())
+
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local Window = Fluent:CreateWindow({
+    Title = "Debuggers",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = false,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+
+-- Hide default buttons
+CloseButton.Visible = false
+MaximizeButton.Visible = false
+
+-- Create custom button
+local CustomButton = Instance.new("ImageLabel")
+CustomButton.Image = "http://www.roblox.com/asset/?id=5597086202"
+CustomButton.Size = UDim2.fromOffset(20, 20)
+CustomButton.Position = UDim2.fromOffset(10, 10)
+CustomButton.Parent = Window.Frame
+
+local CustomButtonText = Instance.new("TextButton")
+CustomButtonText.Text = "•••"
+CustomButtonText.Size = UDim2.fromOffset(30, 20)
+CustomButtonText.Position = UDim2.fromOffset(10, 10)
+CustomButtonText.Parent = Window.Frame
+CustomButtonText.BackgroundTransparency = 1
+CustomButtonText.ZIndex = 2
+CustomButtonText.Font = Enum.Font.SourceSansBold
+CustomButtonText.TextColor3 = Color3.new(1, 1, 1)
+CustomButtonText.TextSize = 14
+
+-- Connect custom button click event
+CustomButtonText.MouseButton1Click:Connect(function()
+    if Window.Visible then
+        Window:Close()
+    else
+        Window:Show()
+    end
+end)
+
+-- Close window if minimized
+if Window.Minimized then
+    Window:Close()
+end
+
+-- Add tabs and buttons
+local Debugs = Window:AddTab({
+    Title = "Debuggers",
+    Icon = "globe"
+})
+
+Debugs:AddButton({
+    Title = "IY",
+    Description = "Helps with noclip and faster actions",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+    end
+})
+
+Debugs:AddButton({
+    Title = "Dex",
+    Description = "Explorer",
+    Callback = function()
+        if IsOnMobile then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/Dex/Mobile%20Dex%20Explorer.txt"))()
+        else
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+        end
+    end
+})
+
+Debugs:AddButton({
+    Title = "SimpleSpy V3",
+    Description = "Logs Remotes, you may get kicked if they have good AC or namecall detection",
+    Callback = function()
+        if IsOnMobile then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/SimpleSpyV3/mobilemain.lua"))()
+        else
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()
+        end
+    end
+})
+
+Debugs:AddButton({
+    Title = "Game Tool Giver",
+    Description = "Gives you tools from the game",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/GameToolGiver.lua"))()
+    end
+})
+
+-- Hide window by default
+Window:Close()
