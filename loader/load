@@ -2,7 +2,7 @@ local UserInputService = game:GetService("UserInputService")
 local IsOnMobile = table.find({
     Enum.Platform.IOS,
     Enum.Platform.Android
-}, UserInputService:GetPlatform())
+}, UserInputService:GetPlatform()) ~= nil
 
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local Window = Fluent:CreateWindow({
@@ -40,17 +40,12 @@ CustomButtonText.TextSize = 14
 CustomButtonText.MouseButton1Click:Connect(function()
     if Window.MinimizeKey then
         Window.MinimizeKey = false
-        -- Window:Minimize() -- если вы хотите свернуть окно
+        -- Window:Minimize() -- Uncomment to minimize window
     else
         Window.MinimizeKey = Enum.KeyCode.LeftControl
-        -- Window:Restore() -- если вы хотите восстановить окно
+        -- Window:Restore() -- Uncomment to restore window
     end
 end)
-
--- Close window if minimized
--- if Window.Minimized then
---     Window:Close()
--- end
 
 -- Add tabs and buttons
 local Debugs = Window:AddTab({
@@ -98,5 +93,7 @@ Debugs:AddButton({
     end
 })
 
--- Hide window by default
-Window:Close()
+-- Ensure window is not closed on mobile
+if IsOnMobile then
+    Window:Restore()
+end
