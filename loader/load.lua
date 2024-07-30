@@ -11,8 +11,10 @@ local MainFrame = Instance.new("Frame")
 local Header = Instance.new("Frame")
 local MenuButton = Instance.new("TextButton")
 local CloseButton = Instance.new("TextButton")
-local HideButton = Instance.new("TextButton")
 local MenuFrame = Instance.new("ScrollingFrame")
+local SectionFrame = Instance.new("Frame")
+local DebuggersButton = Instance.new("TextButton")
+local ACButton = Instance.new("TextButton")
 
 -- Set properties for ScreenGui
 ScreenGui.Name = "MobileUILibrary"
@@ -62,18 +64,6 @@ CloseButton.Text = "X"
 CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseButton.TextSize = 14
 
--- Set properties for HideButton
-HideButton.Name = "HideButton"
-HideButton.Parent = Header
-HideButton.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
-HideButton.BorderSizePixel = 0
-HideButton.Position = UDim2.new(0.8, -10, 0.5, -10)
-HideButton.Size = UDim2.new(0, 20, 0, 20)
-HideButton.Font = Enum.Font.SourceSans
-HideButton.Text = "-"
-HideButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-HideButton.TextSize = 14
-
 -- Set properties for MenuFrame
 MenuFrame.Name = "MenuFrame"
 MenuFrame.Parent = MainFrame
@@ -83,6 +73,38 @@ MenuFrame.Position = UDim2.new(0, 0, 0, 50)
 MenuFrame.Size = UDim2.new(1, 0, 1, -50)
 MenuFrame.CanvasSize = UDim2.new(0, 0, 2, 0)
 MenuFrame.ScrollBarThickness = 6
+
+-- Set properties for SectionFrame
+SectionFrame.Name = "SectionFrame"
+SectionFrame.Parent = MenuFrame
+SectionFrame.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+SectionFrame.BorderSizePixel = 0
+SectionFrame.Position = UDim2.new(0, 0, 0, 0)
+SectionFrame.Size = UDim2.new(1, 0, 0, 50)
+
+-- Set properties for DebuggersButton
+DebuggersButton.Name = "DebuggersButton"
+DebuggersButton.Parent = SectionFrame
+DebuggersButton.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+DebuggersButton.BorderSizePixel = 0
+DebuggersButton.Position = UDim2.new(0.05, 0, 0.1, 0)
+DebuggersButton.Size = UDim2.new(0.4, 0, 0.8, 0)
+DebuggersButton.Font = Enum.Font.SourceSans
+DebuggersButton.Text = "Debuggers"
+DebuggersButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+DebuggersButton.TextSize = 18
+
+-- Set properties for ACButton
+ACButton.Name = "ACButton"
+ACButton.Parent = SectionFrame
+ACButton.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+ACButton.BorderSizePixel = 0
+ACButton.Position = UDim2.new(0.55, 0, 0.1, 0)
+ACButton.Size = UDim2.new(0.4, 0, 0.8, 0)
+ACButton.Font = Enum.Font.SourceSans
+ACButton.Text = "AC"
+ACButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ACButton.TextSize = 18
 
 -- Function to toggle the menu
 local function toggleMenu()
@@ -98,20 +120,15 @@ CloseButton.MouseButton1Click:Connect(function()
     MenuButton.Visible = false
 end)
 
--- Function to hide the menu
-HideButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = false
-end)
-
 -- Function to add buttons
-local function addButton(name, text, callback)
+local function addButton(name, text, parentFrame, callback)
     local button = Instance.new("TextButton")
     button.Name = name
-    button.Parent = MenuFrame
+    button.Parent = parentFrame
     button.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
     button.BorderSizePixel = 0
     button.Size = UDim2.new(0.9, 0, 0, 40)
-    button.Position = UDim2.new(0.05, 0, 0.05, (#MenuFrame:GetChildren() - 1) * 45)
+    button.Position = UDim2.new(0.05, 0, 0.05, (#parentFrame:GetChildren() - 1) * 45)
     button.Font = Enum.Font.SourceSans
     button.Text = text
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -119,8 +136,39 @@ local function addButton(name, text, callback)
     button.MouseButton1Click:Connect(callback)
 end
 
--- Add the specified buttons
-addButton("SimpleSpyButton", "SimpleSpy", function()
+-- Create frames for Debuggers and AC sections
+local DebuggersFrame = Instance.new("Frame")
+DebuggersFrame.Name = "DebuggersFrame"
+DebuggersFrame.Parent = MenuFrame
+DebuggersFrame.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
+DebuggersFrame.BorderSizePixel = 0
+DebuggersFrame.Position = UDim2.new(0, 0, 0, 50)
+DebuggersFrame.Size = UDim2.new(1, 0, 1, -50)
+DebuggersFrame.Visible = false
+
+local ACFrame = Instance.new("Frame")
+ACFrame.Name = "ACFrame"
+ACFrame.Parent = MenuFrame
+ACFrame.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
+ACFrame.BorderSizePixel = 0
+ACFrame.Position = UDim2.new(0, 0, 0, 50)
+ACFrame.Size = UDim2.new(1, 0, 1, -50)
+ACFrame.Visible = false
+
+-- Show Debuggers section
+DebuggersButton.MouseButton1Click:Connect(function()
+    DebuggersFrame.Visible = true
+    ACFrame.Visible = false
+end)
+
+-- Show AC section
+ACButton.MouseButton1Click:Connect(function()
+    DebuggersFrame.Visible = false
+    ACFrame.Visible = true
+end)
+
+-- Add buttons to Debuggers section
+addButton("SimpleSpyButton", "SimpleSpy", DebuggersFrame, function()
     if IsOnMobile then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/SimpleSpyV3/mobilemain.lua"))()
     else
@@ -128,7 +176,7 @@ addButton("SimpleSpyButton", "SimpleSpy", function()
     end
 end)
 
-addButton("DexButton", "Dex", function()
+addButton("DexButton", "Dex", DebuggersFrame, function()
     if IsOnMobile then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/Dex/Mobile%20Dex%20Explorer.txt"))()
     else
@@ -136,7 +184,16 @@ addButton("DexButton", "Dex", function()
     end
 end)
 
-addButton("AntiKickButton", "Anti Kick", function()
+addButton("GameUIViewButton", "Game UI/Frame Viewer", DebuggersFrame, function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gameuigiver.lua"))()
+end)
+
+addButton("GameToolEquipperButton", "Game Tool Equipper", DebuggersFrame, function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gametoolequipper.lua"))()
+end)
+
+-- Add buttons to AC section
+addButton("AntiKickButton", "Anti Kick", ACFrame, function()
     local mt = getrawmetatable(game)
     setreadonly(mt, false)
     local oldmt = mt.__namecall
@@ -152,19 +209,11 @@ addButton("AntiKickButton", "Anti Kick", function()
     setreadonly(mt, true)
 end)
 
-addButton("BypassAntiCheatsButton", "Bypass Ac", function()
+addButton("BypassAntiCheatsButton", "Bypass AntiCheats/Kicks", ACFrame, function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/ADSKerOffical/AntiCheat/main/Bypass"))()
 end)
 
-addButton("GameUIViewButton", "Game UI/Frame Viewer", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gameuigiver.lua"))()
-end)
-
-addButton("GameToolEquipperButton", "Game Tool Equipper", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gametoolequipper.lua"))()
-end)
-
-addButton("BypassAdonisButton1", "Bypass Adonis v1", function()
+addButton("BypassAdonisButton1", "Bypass Adonis v1", ACFrame, function()
     local getinfo = getinfo or debug.getinfo
     local DEBUG = false
     local Hooked = {}
@@ -210,7 +259,7 @@ addButton("BypassAdonisButton1", "Bypass Adonis v1", function()
     setthreadidentity(7)
 end)
 
-addButton("BypassAdonisButton2", "Bypass Adonis v2", function()
+addButton("BypassAdonisButton2", "Bypass Adonis v2", ACFrame, function()
     local players = game:GetService('Players')
     local lplr = players.LocalPlayer
     local lastCF, stop, heartbeatConnection
