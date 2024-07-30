@@ -210,6 +210,7 @@ ACButton.MouseButton1Click:Connect(function()
         end
         setthreadidentity(7)
     end)
+end)
 
 -- Show the initial UI
 ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
