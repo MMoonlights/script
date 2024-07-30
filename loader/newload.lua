@@ -210,42 +210,6 @@ ACButton.MouseButton1Click:Connect(function()
         end
         setthreadidentity(7)
     end)
-    addButton("AntiLockButton", "Anti Lock", ContentFrame, function()
-        local Players = game:GetService("Players")
-        local Client = Players.LocalPlayer
-        local OldGetPropertyChangedSignal = Client.GetPropertyChangedSignal
-        local OldChanged = Client.Changed
-        local OldKick = Client.Kick
-        local OldKickWithMessage = Client.KickWithMessage
-
-        Client.GetPropertyChangedSignal = function(self, property)
-            if property == "Locked" then
-                return Instance.new("BindableEvent").Event
-            end
-            return OldGetPropertyChangedSignal(self, property)
-        end
-
-        Client.Changed = function(self, property)
-            if property == "Locked" then
-                return nil
-            end
-            return OldChanged(self, property)
-        end
-
-        Client.Kick = function(self, reason)
-            return nil
-        end
-
-        Client.KickWithMessage = function(self, message)
-            return nil
-        end
-    end)
-end)
-
-return ScreenGui
 
 -- Show the initial UI
 ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-MainFrame:TweenPosition(UDim2.new(0.5, -150, 0.5, -200), "Out", "Quad", 0.5, true)
-MainFrame.Visible = true
-MenuButton.Text = "-"
