@@ -17,7 +17,7 @@ local DebuggersButton = Instance.new("TextButton")
 local ACButton = Instance.new("TextButton")
 
 -- Set properties for ScreenGui
-ScreenGui.Name = "MobileUILibrary"
+ScreenGui.Name = "UIMobile"
 ScreenGui.Parent = game:GetService("CoreGui")
 ScreenGui.ResetOnSpawn = false
 
