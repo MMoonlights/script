@@ -19,11 +19,13 @@ local ACButton = Instance.new("TextButton")
 -- Set properties for ScreenGui
 ScreenGui.Name = "MobileUILibrary"
 ScreenGui.Parent = game:GetService("CoreGui")
+ScreenGui.ResetOnSpawn = false
 
 -- Set properties for MainFrame
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+MainFrame.BackgroundTransparency = 0.3
 MainFrame.BorderSizePixel = 0
 MainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
 MainFrame.Size = UDim2.new(0, 300, 0, 400)
@@ -35,6 +37,7 @@ MainFrame.Draggable = true
 Header.Name = "Header"
 Header.Parent = MainFrame
 Header.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+Header.BackgroundTransparency = 0.3
 Header.BorderSizePixel = 0
 Header.Size = UDim2.new(1, 0, 0, 50)
 
@@ -42,6 +45,7 @@ Header.Size = UDim2.new(1, 0, 0, 50)
 MenuButton.Name = "MenuButton"
 MenuButton.Parent = ScreenGui
 MenuButton.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+MenuButton.BackgroundTransparency = 0.3
 MenuButton.BorderSizePixel = 0
 MenuButton.Position = UDim2.new(0, 10, 0, 10)
 MenuButton.Size = UDim2.new(0, 50, 0, 50)
@@ -56,6 +60,7 @@ MenuButton.Draggable = true
 CloseButton.Name = "CloseButton"
 CloseButton.Parent = Header
 CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.BackgroundTransparency = 0.3
 CloseButton.BorderSizePixel = 0
 CloseButton.Position = UDim2.new(0.9, -10, 0.5, -10)
 CloseButton.Size = UDim2.new(0, 20, 0, 20)
@@ -68,6 +73,7 @@ CloseButton.TextSize = 14
 MenuFrame.Name = "MenuFrame"
 MenuFrame.Parent = MainFrame
 MenuFrame.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
+MenuFrame.BackgroundTransparency = 0.3
 MenuFrame.BorderSizePixel = 0
 MenuFrame.Position = UDim2.new(0, 0, 0, 50)
 MenuFrame.Size = UDim2.new(1, 0, 1, -50)
@@ -78,6 +84,7 @@ MenuFrame.ScrollBarThickness = 6
 SectionFrame.Name = "SectionFrame"
 SectionFrame.Parent = MenuFrame
 SectionFrame.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+SectionFrame.BackgroundTransparency = 0.3
 SectionFrame.BorderSizePixel = 0
 SectionFrame.Position = UDim2.new(0, 0, 0, 0)
 SectionFrame.Size = UDim2.new(1, 0, 0, 50)
@@ -86,6 +93,7 @@ SectionFrame.Size = UDim2.new(1, 0, 0, 50)
 DebuggersButton.Name = "DebuggersButton"
 DebuggersButton.Parent = SectionFrame
 DebuggersButton.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+DebuggersButton.BackgroundTransparency = 0.3
 DebuggersButton.BorderSizePixel = 0
 DebuggersButton.Position = UDim2.new(0.05, 0, 0.1, 0)
 DebuggersButton.Size = UDim2.new(0.4, 0, 0.8, 0)
@@ -98,6 +106,7 @@ DebuggersButton.TextSize = 18
 ACButton.Name = "ACButton"
 ACButton.Parent = SectionFrame
 ACButton.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+ACButton.BackgroundTransparency = 0.3
 ACButton.BorderSizePixel = 0
 ACButton.Position = UDim2.new(0.55, 0, 0.1, 0)
 ACButton.Size = UDim2.new(0.4, 0, 0.8, 0)
@@ -108,7 +117,14 @@ ACButton.TextSize = 18
 
 -- Function to toggle the menu
 local function toggleMenu()
-    MainFrame.Visible = not MainFrame.Visible
+    if MainFrame.Visible then
+        MainFrame:TweenPosition(UDim2.new(0.5, -150, 1.5, -200), "Out", "Quad", 0.5, true, function()
+            MainFrame.Visible = false
+        end)
+    else
+        MainFrame.Visible = true
+        MainFrame:TweenPosition(UDim2.new(0.5, -150, 0.5, -200), "Out", "Quad", 0.5, true)
+    end
     MenuButton.Text = MainFrame.Visible and "-" or "+"
 end
 
@@ -116,8 +132,10 @@ MenuButton.MouseButton1Click:Connect(toggleMenu)
 
 -- Function to close the menu
 CloseButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = false
-    MenuButton.Visible = false
+    MainFrame:TweenPosition(UDim2.new(0.5, -150, 1.5, -200), "Out", "Quad", 0.5, true, function()
+        MainFrame.Visible = false
+        MenuButton.Visible = false
+    end)
 end)
 
 -- Function to add buttons
@@ -126,6 +144,7 @@ local function addButton(name, text, parentFrame, callback)
     button.Name = name
     button.Parent = parentFrame
     button.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+    button.BackgroundTransparency = 0.3
     button.BorderSizePixel = 0
     button.Size = UDim2.new(0.9, 0, 0, 40)
     button.Position = UDim2.new(0.05, 0, 0.05, (#parentFrame:GetChildren() - 1) * 45)
@@ -141,6 +160,7 @@ local DebuggersFrame = Instance.new("Frame")
 DebuggersFrame.Name = "DebuggersFrame"
 DebuggersFrame.Parent = MenuFrame
 DebuggersFrame.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
+DebuggersFrame.BackgroundTransparency = 0.3
 DebuggersFrame.BorderSizePixel = 0
 DebuggersFrame.Position = UDim2.new(0, 0, 0, 50)
 DebuggersFrame.Size = UDim2.new(1, 0, 1, -50)
@@ -150,6 +170,7 @@ local ACFrame = Instance.new("Frame")
 ACFrame.Name = "ACFrame"
 ACFrame.Parent = MenuFrame
 ACFrame.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
+ACFrame.BackgroundTransparency = 0.3
 ACFrame.BorderSizePixel = 0
 ACFrame.Position = UDim2.new(0, 0, 0, 50)
 ACFrame.Size = UDim2.new(1, 0, 1, -50)
