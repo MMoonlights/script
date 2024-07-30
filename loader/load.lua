@@ -1,5 +1,5 @@
 -- Check for mobile
-UserInputService = game:GetService("UserInputService")
+local UserInputService = game:GetService("UserInputService")
 local IsOnMobile = table.find({
 	Enum.Platform.IOS,
 	Enum.Platform.Android
@@ -8,8 +8,11 @@ local IsOnMobile = table.find({
 -- Create the main UI elements
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
+local Header = Instance.new("Frame")
 local MenuButton = Instance.new("TextButton")
-local MenuFrame = Instance.new("Frame")
+local CloseButton = Instance.new("TextButton")
+local HideButton = Instance.new("TextButton")
+local MenuFrame = Instance.new("ScrollingFrame")
 
 -- Set properties for ScreenGui
 ScreenGui.Name = "MobileUILibrary"
@@ -26,6 +29,13 @@ MainFrame.Visible = false
 MainFrame.Active = true
 MainFrame.Draggable = true
 
+-- Set properties for Header
+Header.Name = "Header"
+Header.Parent = MainFrame
+Header.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+Header.BorderSizePixel = 0
+Header.Size = UDim2.new(1, 0, 0, 50)
+
 -- Set properties for MenuButton
 MenuButton.Name = "MenuButton"
 MenuButton.Parent = ScreenGui
@@ -40,13 +50,39 @@ MenuButton.TextSize = 24
 MenuButton.Active = true
 MenuButton.Draggable = true
 
+-- Set properties for CloseButton
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = Header
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.BorderSizePixel = 0
+CloseButton.Position = UDim2.new(0.9, -10, 0.5, -10)
+CloseButton.Size = UDim2.new(0, 20, 0, 20)
+CloseButton.Font = Enum.Font.SourceSans
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextSize = 14
+
+-- Set properties for HideButton
+HideButton.Name = "HideButton"
+HideButton.Parent = Header
+HideButton.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+HideButton.BorderSizePixel = 0
+HideButton.Position = UDim2.new(0.8, -10, 0.5, -10)
+HideButton.Size = UDim2.new(0, 20, 0, 20)
+HideButton.Font = Enum.Font.SourceSans
+HideButton.Text = "-"
+HideButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+HideButton.TextSize = 14
+
 -- Set properties for MenuFrame
 MenuFrame.Name = "MenuFrame"
 MenuFrame.Parent = MainFrame
 MenuFrame.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
 MenuFrame.BorderSizePixel = 0
-MenuFrame.Position = UDim2.new(0, 0, 0, 0)
-MenuFrame.Size = UDim2.new(1, 0, 1, 0)
+MenuFrame.Position = UDim2.new(0, 0, 0, 50)
+MenuFrame.Size = UDim2.new(1, 0, 1, -50)
+MenuFrame.CanvasSize = UDim2.new(0, 0, 2, 0)
+MenuFrame.ScrollBarThickness = 6
 
 -- Function to toggle the menu
 local function toggleMenu()
@@ -56,15 +92,26 @@ end
 
 MenuButton.MouseButton1Click:Connect(toggleMenu)
 
+-- Function to close the menu
+CloseButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+    MenuButton.Visible = false
+end)
+
+-- Function to hide the menu
+HideButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
 -- Function to add buttons
-local function addButton(name, text, position, size, callback)
+local function addButton(name, text, callback)
     local button = Instance.new("TextButton")
     button.Name = name
     button.Parent = MenuFrame
     button.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
     button.BorderSizePixel = 0
-    button.Position = position
-    button.Size = size
+    button.Size = UDim2.new(0.9, 0, 0, 40)
+    button.Position = UDim2.new(0.05, 0, 0.05, (#MenuFrame:GetChildren() - 1) * 45)
     button.Font = Enum.Font.SourceSans
     button.Text = text
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -73,15 +120,7 @@ local function addButton(name, text, position, size, callback)
 end
 
 -- Add the specified buttons
-addButton("DexButton", "Dex", UDim2.new(0.1, 0, 0.1, 0), UDim2.new(0.8, 0, 0.1, 0), function()
-    if IsOnMobile then
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/Dex/Mobile%20Dex%20Explorer.txt"))()
-    else
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-    end
-end)
-
-addButton("SimpleSpyButton", "SimpleSpy", UDim2.new(0.1, 0, 0.25, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+addButton("SimpleSpyButton", "SimpleSpy", function()
     if IsOnMobile then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/SimpleSpyV3/mobilemain.lua"))()
     else
@@ -89,17 +128,27 @@ addButton("SimpleSpyButton", "SimpleSpy", UDim2.new(0.1, 0, 0.25, 0), UDim2.new(
     end
 end)
 
-addButton("HydroxideButton", "Hydroxide", UDim2.new(0.1, 0, 0.4, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+addButton("DexButton", "Dex", function()
+    if IsOnMobile then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/Dex/Mobile%20Dex%20Explorer.txt"))()
+    else
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+    end
+end)
+
+addButton("HydroxideButton", "Hydroxide", function()
     local owner = "Upbolt"
     local branch = "revision"
+
     local function webImport(file)
         return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/%s/Hydroxide/%s/%s.lua"):format(owner, branch, file)), file .. '.lua')()
     end
+
     webImport("init")
     webImport("ui/main")
 end)
 
-addButton("AntiKickButton", "Anti Kick", UDim2.new(0.1, 0, 0.55, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+addButton("AntiKickButton", "Anti Kick", function()
     local mt = getrawmetatable(game)
     setreadonly(mt, false)
     local oldmt = mt.__namecall
@@ -115,11 +164,11 @@ addButton("AntiKickButton", "Anti Kick", UDim2.new(0.1, 0, 0.55, 0), UDim2.new(0
     setreadonly(mt, true)
 end)
 
-addButton("BypassAntiCheatsButton", "Bypass AntiCheats/Kicks", UDim2.new(0.1, 0, 0.7, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+addButton("BypassAntiCheatsButton", "Bypass AntiCheats/Kicks", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/ADSKerOffical/AntiCheat/main/Bypass"))()
 end)
 
-addButton("BypassAdonisButton1", "Bypass Adonis (1)", UDim2.new(0.1, 0, 0.85, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+addButton("BypassAdonisButton1", "Bypass Adonis (1)", function()
     local getinfo = getinfo or debug.getinfo
     local DEBUG = false
     local Hooked = {}
@@ -165,7 +214,7 @@ addButton("BypassAdonisButton1", "Bypass Adonis (1)", UDim2.new(0.1, 0, 0.85, 0)
     setthreadidentity(7)
 end)
 
-addButton("BypassAdonisButton2", "Bypass Adonis (2)", UDim2.new(0.1, 0, 1, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+addButton("BypassAdonisButton2", "Bypass Adonis (2)", function()
     local players = game:GetService('Players')
     local lplr = players.LocalPlayer
     local lastCF, stop, heartbeatConnection
@@ -195,27 +244,11 @@ addButton("BypassAdonisButton2", "Bypass Adonis (2)", UDim2.new(0.1, 0, 1, 0), U
     start()
 end)
 
-addButton("SimpleSpyV3Button", "SimpleSpy V3", UDim2.new(0.1, 0, 1.15, 0), UDim2.new(0.8, 0, 0.1, 0), function()
-    if IsOnMobile then
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/SimpleSpyV3/mobilemain.lua"))()
-    else
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()
-    end
-end)
-
-addButton("DexV2Button", "Dex V2", UDim2.new(0.1, 0, 1.3, 0), UDim2.new(0.8, 0, 0.1, 0), function()
-    if IsOnMobile then
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/Dex/Mobile%20Dex%20Explorer.txt"))()
-    else
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
-    end
-end)
-
-addButton("GameUIViewButton", "Game UI/Frame Viewer", UDim2.new(0.1, 0, 1.45, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+addButton("GameUIViewButton", "Game UI/Frame Viewer", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gameuigiver.lua"))()
 end)
 
-addButton("GameToolEquipperButton", "Game Tool Equipper", UDim2.new(0.1, 0, 1.6, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+addButton("GameToolEquipperButton", "Game Tool Equipper", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gametoolequipper.lua"))()
 end)
 
