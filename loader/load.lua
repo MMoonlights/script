@@ -136,18 +136,6 @@ addButton("DexButton", "Dex", function()
     end
 end)
 
-addButton("HydroxideButton", "Hydroxide", function()
-    local owner = "Upbolt"
-    local branch = "revision"
-
-    local function webImport(file)
-        return loadstring(game:HttpGetAsync(("https://raw.githubusercontent.com/%s/Hydroxide/%s/%s.lua"):format(owner, branch, file)), file .. '.lua')()
-    end
-
-    webImport("init")
-    webImport("ui/main")
-end)
-
 addButton("AntiKickButton", "Anti Kick", function()
     local mt = getrawmetatable(game)
     setreadonly(mt, false)
@@ -164,11 +152,19 @@ addButton("AntiKickButton", "Anti Kick", function()
     setreadonly(mt, true)
 end)
 
-addButton("BypassAntiCheatsButton", "Bypass AntiCheats/Kicks", function()
+addButton("BypassAntiCheatsButton", "Bypass Ac", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/ADSKerOffical/AntiCheat/main/Bypass"))()
 end)
 
-addButton("BypassAdonisButton1", "Bypass Adonis (1)", function()
+addButton("GameUIViewButton", "Game UI/Frame Viewer", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gameuigiver.lua"))()
+end)
+
+addButton("GameToolEquipperButton", "Game Tool Equipper", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gametoolequipper.lua"))()
+end)
+
+addButton("BypassAdonisButton1", "Bypass Adonis v1", function()
     local getinfo = getinfo or debug.getinfo
     local DEBUG = false
     local Hooked = {}
@@ -214,7 +210,7 @@ addButton("BypassAdonisButton1", "Bypass Adonis (1)", function()
     setthreadidentity(7)
 end)
 
-addButton("BypassAdonisButton2", "Bypass Adonis (2)", function()
+addButton("BypassAdonisButton2", "Bypass Adonis v2", function()
     local players = game:GetService('Players')
     local lplr = players.LocalPlayer
     local lastCF, stop, heartbeatConnection
@@ -242,14 +238,6 @@ addButton("BypassAdonisButton2", "Bypass Adonis (2)", function()
         heartbeatConnection:Disconnect()
     end)
     start()
-end)
-
-addButton("GameUIViewButton", "Game UI/Frame Viewer", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gameuigiver.lua"))()
-end)
-
-addButton("GameToolEquipperButton", "Game Tool Equipper", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/yofriendfromschool1/Sky-Hub-Backup/main/gametoolequipper.lua"))()
 end)
 
 -- Add the UI to the player's screen
