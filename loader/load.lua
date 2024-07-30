@@ -1,16 +1,11 @@
--- Mobile UI Library for Client-Sided Executor
-
--- Create the main UI elements
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
-local MenuButton = Instance.new("ImageButton")
+local MenuButton = Instance.new("TextButton")
 local MenuFrame = Instance.new("Frame")
 
--- Set properties for ScreenGui
-ScreenGui.Name = "MobileUILibrary"
+ScreenGui.Name = "Library"
 ScreenGui.Parent = game:GetService("CoreGui")
 
--- Set properties for MainFrame
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
@@ -18,16 +13,20 @@ MainFrame.BorderSizePixel = 0
 MainFrame.Position = UDim2.new(0, 50, 0, 50)
 MainFrame.Size = UDim2.new(0, 300, 0, 400)
 MainFrame.Visible = false
+MainFrame.Active = true
+MainFrame.Draggable = true
 
--- Set properties for MenuButton
 MenuButton.Name = "MenuButton"
 MenuButton.Parent = ScreenGui
-MenuButton.BackgroundTransparency = 1
+MenuButton.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+MenuButton.BorderSizePixel = 0
 MenuButton.Position = UDim2.new(0, 10, 0, 10)
 MenuButton.Size = UDim2.new(0, 50, 0, 50)
-MenuButton.Image = "rbxassetid://5597086202" -- Replace with your icon ID
+MenuButton.Font = Enum.Font.SourceSans
+MenuButton.Text = "+"
+MenuButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MenuButton.TextSize = 24
 
--- Set properties for MenuFrame
 MenuFrame.Name = "MenuFrame"
 MenuFrame.Parent = MainFrame
 MenuFrame.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
@@ -35,14 +34,13 @@ MenuFrame.BorderSizePixel = 0
 MenuFrame.Position = UDim2.new(0, 0, 0, 0)
 MenuFrame.Size = UDim2.new(1, 0, 1, 0)
 
--- Function to toggle the menu
 local function toggleMenu()
     MainFrame.Visible = not MainFrame.Visible
+    MenuButton.Text = MainFrame.Visible and "-" or "+"
 end
 
 MenuButton.MouseButton1Click:Connect(toggleMenu)
 
--- Add a sample button to the menu
 local SampleButton = Instance.new("TextButton")
 SampleButton.Name = "SampleButton"
 SampleButton.Parent = MenuFrame
@@ -55,41 +53,27 @@ SampleButton.Text = "Sample Button"
 SampleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 SampleButton.TextSize = 24
 
--- Function for SampleButton
 SampleButton.MouseButton1Click:Connect(function()
     print("Sample button clicked")
 end)
 
--- Function to add more buttons/icons
-local function addButton(name, text, iconId, position, size, callback)
-    local button = Instance.new("ImageButton")
+local function addButton(name, text, position, size, callback)
+    local button = Instance.new("TextButton")
     button.Name = name
     button.Parent = MenuFrame
-    button.BackgroundTransparency = 1
+    button.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+    button.BorderSizePixel = 0
     button.Position = position
     button.Size = size
-    button.Image = "rbxassetid://5597086202" -- Replace with your icon ID
+    button.Font = Enum.Font.SourceSans
+    button.Text = text
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextSize = 24
     button.MouseButton1Click:Connect(callback)
-    
-    local buttonText = Instance.new("TextLabel")
-    buttonText.Name = name.."Text"
-    buttonText.Parent = button
-    buttonText.BackgroundTransparency = 1
-    buttonText.Size = UDim2.new(1, 0, 1, 0)
-    buttonText.Font = Enum.Font.SourceSans
-    buttonText.Text = text
-    buttonText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    buttonText.TextSize = 14
 end
 
--- Example usage of addButton
-addButton("SpyButton", "Open Spy", "5597086202", UDim2.new(0.1, 0, 0.25, 0), UDim2.new(0.8, 0, 0.1, 0), function()
-    print("Spy button clicked")
-    -- Insert code to load SimpleSpyMobile or other loaders
+addButton("Remote Spy", "Open Remote Spy", UDim2.new(0.1, 0, 0.25, 0), UDim2.new(0.8, 0, 0.1, 0), function()
+    print("Remote Spy clicked")
 end)
 
--- Add additional UI elements and loaders as needed
--- Ensure to replace "YOUR_ICON_ID" with the actual ID of the icons you are using
-
--- Add the UI to the player's screen
 ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
