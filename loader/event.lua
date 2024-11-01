@@ -4,7 +4,9 @@ local character = player.Character or player.CharacterAdded:Wait()
 local playerRootPart = character:WaitForChild("HumanoidRootPart")
 
 -- Folder and Pumpkin Setup
-local pumpkinsFolder = game:GetService("Workspace"):WaitForChild("HalloweenEvent"):WaitForChild("Objects")
+local eventFolder = game:GetService("Workspace"):WaitForChild("HalloweenEvent")
+local pumpkinsFolder = eventFolder:WaitForChild("Objects")
+local posFolder = eventFolder:WaitForChild("Pos")
 local pumpkinPrefix = "Pumpkin_"
 local pumpkinCount = 10 -- Adjust if there are more pumpkins
 local detectedPumpkins = {}
@@ -48,7 +50,7 @@ title.TextColor3 = Color3.fromRGB(255, 165, 0)
 title.Parent = teleportMenu
 
 -- Function to Add Teleport Button
-local function addTeleportButton(pumpkin)
+local function addTeleportButton(pumpkin, pos)
     local button = Instance.new("TextButton")
     button.Size = UDim2.new(1, -10, 0, 30)
     button.Position = UDim2.new(0, 5, 0, 45 + #detectedPumpkins * 35)
@@ -62,7 +64,7 @@ local function addTeleportButton(pumpkin)
     -- Button Functionality for Teleport
     button.MouseButton1Click:Connect(function()
         if playerRootPart then
-            playerRootPart.CFrame = pumpkin.CFrame
+            playerRootPart.CFrame = pos.CFrame
         end
     end)
 end
@@ -71,20 +73,23 @@ end
 local function updateESP()
     for i = 1, pumpkinCount do
         local pumpkin = pumpkinsFolder:FindFirstChild(pumpkinPrefix .. i)
+        local pos = posFolder:FindFirstChild("Part")
 
-        if pumpkin and not detectedPumpkins[pumpkin] then
+        -- Ensure both pumpkin and position Part exist and aren't yet in the detected list
+        if pumpkin and pos and not detectedPumpkins[pumpkin] then
             -- Add pumpkin to detected list and set up ESP and button
             detectedPumpkins[pumpkin] = {
-                label = createESPLabel(pumpkin)
+                label = createESPLabel(pumpkin),
+                pos = pos
             }
-            addTeleportButton(pumpkin)
+            addTeleportButton(pumpkin, pos)
         end
 
         -- Update ESP label with position and distance info
-        if pumpkin and detectedPumpkins[pumpkin] then
-            local distance = (playerRootPart.Position - pumpkin.Position).Magnitude
+        if pumpkin and pos and detectedPumpkins[pumpkin] then
+            local distance = (playerRootPart.Position - pos.Position).Magnitude
             detectedPumpkins[pumpkin].label.Text = string.format("%s - Distance: %.1f", pumpkin.Name, distance)
-            local screenPos, onScreen = game.Workspace.CurrentCamera:WorldToViewportPoint(pumpkin.Position)
+            local screenPos, onScreen = game.Workspace.CurrentCamera:WorldToViewportPoint(pos.Position)
 
             -- Position the ESP label on the screen if on screen
             if onScreen then
@@ -100,13 +105,12 @@ end
 -- Function to Check Collection
 local function checkCollection()
     for pumpkin, data in pairs(detectedPumpkins) do
-        if pumpkin and pumpkin.Parent then
-            local distance = (playerRootPart.Position - pumpkin.Position).Magnitude
-            if distance < 5 then
-                -- Simulate "collection" by removing ESP label and teleport button
-                data.label:Destroy()
-                detectedPumpkins[pumpkin] = nil
-            end
+        local pos = data.pos
+        local distance = (playerRootPart.Position - pos.Position).Magnitude
+        if distance < 5 then
+            -- Simulate "collection" by removing ESP label and teleport button
+            data.label:Destroy()
+            detectedPumpkins[pumpkin] = nil
         end
     end
 end
