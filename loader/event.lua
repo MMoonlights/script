@@ -11,15 +11,15 @@ local pumpkinPrefix = "Pumpkin_"
 local pumpkinCount = 10 -- Adjust if there are more pumpkins
 local detectedPumpkins = {}
 
--- Debug ScreenGui Setup
+-- Initialize ScreenGui for ESP and Teleport Menu
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "PumpkinESP_GUI"
 screenGui.ResetOnSpawn = false
-screenGui.Parent = game.CoreGui
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 print("ScreenGui for ESP and teleport menu created")
 
--- ESP Text Template
+-- Function to Create ESP Label for a Pumpkin
 local function createESPLabel(pumpkin)
     print("Creating ESP label for:", pumpkin.Name)
     local textLabel = Instance.new("TextLabel")
@@ -34,7 +34,7 @@ local function createESPLabel(pumpkin)
     return textLabel
 end
 
--- Teleport Menu
+-- Create Teleport Menu
 local teleportMenu = Instance.new("Frame")
 teleportMenu.Size = UDim2.new(0, 300, 0, 400)
 teleportMenu.Position = UDim2.new(0.05, 0, 0.3, 0)
@@ -54,7 +54,7 @@ title.Parent = teleportMenu
 
 print("Teleport menu created in ScreenGui")
 
--- Function to Add Teleport Button
+-- Function to Add a Teleport Button for Each Pumpkin
 local function addTeleportButton(pumpkin, pos)
     print("Adding teleport button for:", pumpkin.Name)
     local button = Instance.new("TextButton")
@@ -80,22 +80,20 @@ end
 local function updateESP()
     for i = 1, pumpkinCount do
         local pumpkin = pumpkinsFolder:FindFirstChild(pumpkinPrefix .. i)
-        local pos = posFolder:FindFirstChild("Part")
+        local pos = posFolder:FindFirstChild("Part" .. i) -- Change to "Part" if all positions are just named "Part"
 
-        if pumpkin then
-            print("Found pumpkin:", pumpkin.Name)
-        else
+        if not pumpkin then
             print("Pumpkin", pumpkinPrefix .. i, "not found.")
+            continue
         end
         
-        if pos then
-            print("Found position part for pumpkin:", pumpkin.Name)
-        else
+        if not pos then
             print("Position part not found for pumpkin", pumpkinPrefix .. i)
+            continue
         end
 
-        -- Ensure both pumpkin and position Part exist and aren't yet in the detected list
-        if pumpkin and pos and not detectedPumpkins[pumpkin] then
+        -- Set up ESP and Teleport Button if not already added
+        if not detectedPumpkins[pumpkin] then
             print("Setting up ESP and teleport for:", pumpkin.Name)
             detectedPumpkins[pumpkin] = {
                 label = createESPLabel(pumpkin),
@@ -104,13 +102,13 @@ local function updateESP()
             addTeleportButton(pumpkin, pos)
         end
 
-        -- Update ESP label with position and distance info
-        if pumpkin and pos and detectedPumpkins[pumpkin] then
+        -- Update ESP Label with Position and Distance
+        if detectedPumpkins[pumpkin] then
             local distance = (playerRootPart.Position - pos.Position).Magnitude
             detectedPumpkins[pumpkin].label.Text = string.format("%s - Distance: %.1f", pumpkin.Name, distance)
             local screenPos, onScreen = game.Workspace.CurrentCamera:WorldToViewportPoint(pos.Position)
 
-            -- Position the ESP label on the screen if on screen
+            -- Update label position if pumpkin is on-screen
             if onScreen then
                 detectedPumpkins[pumpkin].label.Position = UDim2.new(0, screenPos.X, 0, screenPos.Y)
                 detectedPumpkins[pumpkin].label.Visible = true
@@ -123,7 +121,7 @@ local function updateESP()
     end
 end
 
--- Function to Check Collection
+-- Function to Check Collection and Remove ESP When Collected
 local function checkCollection()
     for pumpkin, data in pairs(detectedPumpkins) do
         local pos = data.pos
