@@ -17,8 +17,11 @@ screenGui.Name = "PumpkinESP_GUI"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = game.CoreGui
 
+print("ScreenGui for ESP and teleport menu created")
+
 -- ESP Text Template
 local function createESPLabel(pumpkin)
+    print("Creating ESP label for:", pumpkin.Name)
     local textLabel = Instance.new("TextLabel")
     textLabel.Size = UDim2.new(0, 200, 0, 25)
     textLabel.BackgroundTransparency = 0.5
@@ -49,8 +52,11 @@ title.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 title.TextColor3 = Color3.fromRGB(255, 165, 0)
 title.Parent = teleportMenu
 
+print("Teleport menu created in ScreenGui")
+
 -- Function to Add Teleport Button
 local function addTeleportButton(pumpkin, pos)
+    print("Adding teleport button for:", pumpkin.Name)
     local button = Instance.new("TextButton")
     button.Size = UDim2.new(1, -10, 0, 30)
     button.Position = UDim2.new(0, 5, 0, 45 + #detectedPumpkins * 35)
@@ -64,6 +70,7 @@ local function addTeleportButton(pumpkin, pos)
     -- Button Functionality for Teleport
     button.MouseButton1Click:Connect(function()
         if playerRootPart then
+            print("Teleporting to pumpkin:", pumpkin.Name, "at position:", pos.Position)
             playerRootPart.CFrame = pos.CFrame
         end
     end)
@@ -75,9 +82,21 @@ local function updateESP()
         local pumpkin = pumpkinsFolder:FindFirstChild(pumpkinPrefix .. i)
         local pos = posFolder:FindFirstChild("Part")
 
+        if pumpkin then
+            print("Found pumpkin:", pumpkin.Name)
+        else
+            print("Pumpkin", pumpkinPrefix .. i, "not found.")
+        end
+        
+        if pos then
+            print("Found position part for pumpkin:", pumpkin.Name)
+        else
+            print("Position part not found for pumpkin", pumpkinPrefix .. i)
+        end
+
         -- Ensure both pumpkin and position Part exist and aren't yet in the detected list
         if pumpkin and pos and not detectedPumpkins[pumpkin] then
-            -- Add pumpkin to detected list and set up ESP and button
+            print("Setting up ESP and teleport for:", pumpkin.Name)
             detectedPumpkins[pumpkin] = {
                 label = createESPLabel(pumpkin),
                 pos = pos
@@ -95,8 +114,10 @@ local function updateESP()
             if onScreen then
                 detectedPumpkins[pumpkin].label.Position = UDim2.new(0, screenPos.X, 0, screenPos.Y)
                 detectedPumpkins[pumpkin].label.Visible = true
+                print("Pumpkin:", pumpkin.Name, "is on screen at position:", screenPos)
             else
                 detectedPumpkins[pumpkin].label.Visible = false
+                print("Pumpkin:", pumpkin.Name, "is off-screen.")
             end
         end
     end
@@ -109,8 +130,11 @@ local function checkCollection()
         local distance = (playerRootPart.Position - pos.Position).Magnitude
         if distance < 5 then
             -- Simulate "collection" by removing ESP label and teleport button
+            print("Collected pumpkin:", pumpkin.Name, "- Removing ESP and teleport button.")
             data.label:Destroy()
             detectedPumpkins[pumpkin] = nil
+        else
+            print("Pumpkin:", pumpkin.Name, "is not yet collected. Distance:", distance)
         end
     end
 end
@@ -119,10 +143,12 @@ end
 player.CharacterAdded:Connect(function(newCharacter)
     character = newCharacter
     playerRootPart = character:WaitForChild("HumanoidRootPart")
+    print("Character respawned, updated playerRootPart.")
 end)
 
 -- Continuous Update Loop for ESP and Collection Check
 game:GetService("RunService").RenderStepped:Connect(function()
+    print("Running updateESP and checkCollection")
     updateESP()
     checkCollection()
 end)
