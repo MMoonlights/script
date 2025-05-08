@@ -205,13 +205,13 @@ function Window:Create()
     topBarCorner.Parent = self.TopBar
     
     -- Закрываем нижние углы TopBar
-    local topBarCover = Instance.new("Frame")
-    topBarCover.Name = "TopBarCover"
-    topBarCover.BackgroundColor3 = self.Theme.Secondary
-    topBarCover.BorderSizePixel = 0
-    topBarCover.Position = UDim2.new(0, 0, 1, -8)
-    topBarCover.Size = UDim2.new(1, 0, 0, 8)
-    topBarCover.Parent = self.TopBar
+    self.TopBarCover = Instance.new("Frame")
+    self.TopBarCover.Name = "TopBarCover"
+    self.TopBarCover.BackgroundColor3 = self.Theme.Secondary
+    self.TopBarCover.BorderSizePixel = 0
+    self.TopBarCover.Position = UDim2.new(0, 0, 1, -8)
+    self.TopBarCover.Size = UDim2.new(1, 0, 0, 8)
+    self.TopBarCover.Parent = self.TopBar
     
     -- Заголовок
     self.TitleLabel = Instance.new("TextLabel")
@@ -291,13 +291,13 @@ function Window:Create()
     tabHolderCorner.Parent = self.TabHolder
     
     -- Закрываем правые углы TabHolder
-    local tabHolderCover = Instance.new("Frame")
-    tabHolderCover.Name = "TabHolderCover"
-    tabHolderCover.BackgroundColor3 = self.Theme.Secondary
-    tabHolderCover.BorderSizePixel = 0
-    tabHolderCover.Position = UDim2.new(1, -8, 0, 0)
-    tabHolderCover.Size = UDim2.new(0, 8, 1, 0)
-    tabHolderCover.Parent = self.TabHolder
+    self.TabHolderCover = Instance.new("Frame")
+    self.TabHolderCover.Name = "TabHolderCover"
+    self.TabHolderCover.BackgroundColor3 = self.Theme.Secondary
+    self.TabHolderCover.BorderSizePixel = 0
+    self.TabHolderCover.Position = UDim2.new(1, -8, 0, 0)
+    self.TabHolderCover.Size = UDim2.new(0, 8, 1, 0)
+    self.TabHolderCover.Parent = self.TabHolder
     
     -- Скроллер вкладок
     self.TabScroller = Instance.new("ScrollingFrame")
