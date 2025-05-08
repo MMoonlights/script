@@ -169,39 +169,76 @@ function Window:Create()
         self.ScreenGui.Parent = game.CoreGui
     end
     
+    -- Эффект размытия фона (блюр)
+    self.Blur = Instance.new("BlurEffect")
+    self.Blur.Size = 0
+    self.Blur.Parent = game:GetService("Lighting")
+    Utils:Tween(self.Blur, {Size = 10}, 0.5)
+    
+    -- Дополнительное затемнение для улучшения контраста интерфейса
+    self.DarkBackground = Instance.new("Frame")
+    self.DarkBackground.Name = "DarkBackground"
+    self.DarkBackground.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    self.DarkBackground.BackgroundTransparency = 1
+    self.DarkBackground.Size = UDim2.fromScale(1, 1)
+    self.DarkBackground.ZIndex = 10
+    Utils:Tween(self.DarkBackground, {BackgroundTransparency = 0.5}, 0.5)
+    self.DarkBackground.Parent = self.ScreenGui
+    
     -- Основной фрейм
     self.MainFrame = Instance.new("Frame")
     self.MainFrame.Name = "MainFrame"
     self.MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     self.MainFrame.BackgroundColor3 = self.Theme.Primary
     self.MainFrame.Position = UDim2.fromScale(0.5, 0.5)
-    self.MainFrame.Size = UDim2.fromOffset(600, 350)
+    self.MainFrame.Size = UDim2.fromOffset(650, 400)
+    self.MainFrame.ZIndex = 11
     self.MainFrame.Parent = self.ScreenGui
+    
+    -- Анимация появления
+    self.MainFrame.Size = UDim2.fromOffset(0, 0)
+    Utils:Tween(self.MainFrame, {Size = UDim2.fromOffset(650, 400)}, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    
+    -- Тень для основного фрейма
+    local mainShadow = Instance.new("ImageLabel")
+    mainShadow.Name = "Shadow"
+    mainShadow.BackgroundTransparency = 1
+    mainShadow.Position = UDim2.fromOffset(-15, -15)
+    mainShadow.Size = UDim2.new(1, 30, 1, 30)
+    mainShadow.ZIndex = 10
+    mainShadow.Image = "rbxassetid://6014261993"
+    mainShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    mainShadow.ImageTransparency = 0.5
+    mainShadow.ScaleType = Enum.ScaleType.Slice
+    mainShadow.SliceCenter = Rect.new(49, 49, 450, 450)
+    mainShadow.Parent = self.MainFrame
     
     -- Делаем MainFrame перетаскиваемым
     Utils:MakeDraggable(self.MainFrame)
     
     -- Добавляем скругление к MainFrame
     local mainCorner = Instance.new("UICorner")
-    mainCorner.CornerRadius = UDim.new(0, 8)
+    mainCorner.CornerRadius = UDim.new(0, 10)
     mainCorner.Parent = self.MainFrame
     
     -- Добавляем обводку к MainFrame
     local mainStroke = Instance.new("UIStroke")
     mainStroke.Color = self.Theme.StrokeColor
-    mainStroke.Thickness = 1
+    mainStroke.Thickness = 1.5
+    mainStroke.Transparency = 0.5
     mainStroke.Parent = self.MainFrame
     
     -- Верхняя панель
     self.TopBar = Instance.new("Frame")
     self.TopBar.Name = "TopBar"
     self.TopBar.BackgroundColor3 = self.Theme.Secondary
-    self.TopBar.Size = UDim2.new(1, 0, 0, 40)
+    self.TopBar.Size = UDim2.new(1, 0, 0, 45)
+    self.TopBar.ZIndex = 12
     self.TopBar.Parent = self.MainFrame
     
     -- Скругление верхней панели
     local topBarCorner = Instance.new("UICorner")
-    topBarCorner.CornerRadius = UDim.new(0, 8)
+    topBarCorner.CornerRadius = UDim.new(0, 10)
     topBarCorner.Parent = self.TopBar
     
     -- Закрываем нижние углы TopBar
@@ -209,56 +246,77 @@ function Window:Create()
     self.TopBarCover.Name = "TopBarCover"
     self.TopBarCover.BackgroundColor3 = self.Theme.Secondary
     self.TopBarCover.BorderSizePixel = 0
-    self.TopBarCover.Position = UDim2.new(0, 0, 1, -8)
-    self.TopBarCover.Size = UDim2.new(1, 0, 0, 8)
+    self.TopBarCover.Position = UDim2.new(0, 0, 1, -10)
+    self.TopBarCover.Size = UDim2.new(1, 0, 0, 10)
+    self.TopBarCover.ZIndex = 12
     self.TopBarCover.Parent = self.TopBar
+    
+    -- Логотип
+    self.Logo = Instance.new("ImageLabel")
+    self.Logo.Name = "Logo"
+    self.Logo.BackgroundTransparency = 1
+    self.Logo.Position = UDim2.fromOffset(15, 7)
+    self.Logo.Size = UDim2.fromOffset(30, 30)
+    self.Logo.ZIndex = 13
+    self.Logo.Image = "rbxassetid://7072706318" -- Логотип Orbit
+    self.Logo.ImageColor3 = self.Theme.Accent
+    self.Logo.Parent = self.TopBar
     
     -- Заголовок
     self.TitleLabel = Instance.new("TextLabel")
     self.TitleLabel.Name = "TitleLabel"
     self.TitleLabel.BackgroundTransparency = 1
-    self.TitleLabel.Position = UDim2.fromOffset(15, 0)
-    self.TitleLabel.Size = UDim2.new(1, -110, 1, 0)
+    self.TitleLabel.Position = UDim2.fromOffset(55, 0)
+    self.TitleLabel.Size = UDim2.new(1, -160, 1, 0)
     self.TitleLabel.Font = Enum.Font.GothamBold
     self.TitleLabel.Text = self.Title
     self.TitleLabel.TextColor3 = self.Theme.Text
     self.TitleLabel.TextSize = 16
     self.TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    self.TitleLabel.ZIndex = 13
     self.TitleLabel.Parent = self.TopBar
     
-    -- Кнопка закрытия
-    self.CloseButton = Instance.new("ImageButton")
-    self.CloseButton.Name = "CloseButton"
-    self.CloseButton.BackgroundTransparency = 1
-    self.CloseButton.Position = UDim2.new(1, -35, 0.5, -10)
-    self.CloseButton.Size = UDim2.fromOffset(20, 20)
-    self.CloseButton.Image = "rbxassetid://9113953222"
-    self.CloseButton.ImageColor3 = self.Theme.Text
-    self.CloseButton.Parent = self.TopBar
+    -- Контейнер для кнопок управления
+    self.ControlButtons = Instance.new("Frame")
+    self.ControlButtons.Name = "ControlButtons"
+    self.ControlButtons.BackgroundTransparency = 1
+    self.ControlButtons.Position = UDim2.new(1, -105, 0, 0)
+    self.ControlButtons.Size = UDim2.fromOffset(105, 45)
+    self.ControlButtons.ZIndex = 13
+    self.ControlButtons.Parent = self.TopBar
     
-    self.CloseButton.MouseEnter:Connect(function()
-        Utils:Tween(self.CloseButton, {ImageColor3 = self.Theme.Accent})
+    -- Кнопка настроек
+    self.SettingsButton = Instance.new("ImageButton")
+    self.SettingsButton.Name = "SettingsButton"
+    self.SettingsButton.BackgroundTransparency = 1
+    self.SettingsButton.Position = UDim2.fromOffset(10, 12)
+    self.SettingsButton.Size = UDim2.fromOffset(20, 20)
+    self.SettingsButton.ZIndex = 14
+    self.SettingsButton.Image = "rbxassetid://3926307971"
+    self.SettingsButton.ImageRectOffset = Vector2.new(324, 124)
+    self.SettingsButton.ImageRectSize = Vector2.new(36, 36)
+    self.SettingsButton.ImageColor3 = self.Theme.Text
+    self.SettingsButton.Parent = self.ControlButtons
+    
+    -- Эффекты для кнопки настроек
+    self.SettingsButton.MouseEnter:Connect(function()
+        Utils:Tween(self.SettingsButton, {ImageColor3 = self.Theme.Accent})
     end)
     
-    self.CloseButton.MouseLeave:Connect(function()
-        Utils:Tween(self.CloseButton, {ImageColor3 = self.Theme.Text})
-    end)
-    
-    self.CloseButton.MouseButton1Click:Connect(function()
-        Utils:Tween(self.MainFrame, {Size = UDim2.fromOffset(0, 0), Position = UDim2.fromScale(0.5, 0.5)}, 0.3)
-        task.wait(0.3)
-        self.ScreenGui:Destroy()
+    self.SettingsButton.MouseLeave:Connect(function()
+        Utils:Tween(self.SettingsButton, {ImageColor3 = self.Theme.Text})
     end)
     
     -- Кнопка сворачивания
     self.MinimizeButton = Instance.new("ImageButton")
     self.MinimizeButton.Name = "MinimizeButton"
     self.MinimizeButton.BackgroundTransparency = 1
-    self.MinimizeButton.Position = UDim2.new(1, -65, 0.5, -10)
+    self.MinimizeButton.Position = UDim2.fromOffset(45, 12)
     self.MinimizeButton.Size = UDim2.fromOffset(20, 20)
+    self.MinimizeButton.ZIndex = 14
     self.MinimizeButton.Image = "rbxassetid://9113934104"
     self.MinimizeButton.ImageColor3 = self.Theme.Text
-    self.MinimizeButton.Parent = self.TopBar
+    self.MinimizeButton.Parent = self.ControlButtons
     
     self.MinimizeButton.MouseEnter:Connect(function()
         Utils:Tween(self.MinimizeButton, {ImageColor3 = self.Theme.Accent})
@@ -271,23 +329,56 @@ function Window:Create()
     self.MinimizeButton.MouseButton1Click:Connect(function()
         self.Toggled = not self.Toggled
         if self.Toggled then
-            Utils:Tween(self.MainFrame, {Size = UDim2.fromOffset(600, 350)})
+            Utils:Tween(self.MainFrame, {Size = UDim2.fromOffset(650, 400)}, 0.3, Enum.EasingStyle.Quint)
+            Utils:Tween(self.Blur, {Size = 10}, 0.3)
         else
-            Utils:Tween(self.MainFrame, {Size = UDim2.fromOffset(600, 40)})
+            Utils:Tween(self.MainFrame, {Size = UDim2.fromOffset(650, 45)}, 0.3, Enum.EasingStyle.Quint)
+            Utils:Tween(self.Blur, {Size = 5}, 0.3)
         end
     end)
     
-    -- Держатель вкладок
+    -- Кнопка закрытия
+    self.CloseButton = Instance.new("ImageButton")
+    self.CloseButton.Name = "CloseButton"
+    self.CloseButton.BackgroundTransparency = 1
+    self.CloseButton.Position = UDim2.fromOffset(75, 12)
+    self.CloseButton.Size = UDim2.fromOffset(20, 20)
+    self.CloseButton.ZIndex = 14
+    self.CloseButton.Image = "rbxassetid://9113953222"
+    self.CloseButton.ImageColor3 = self.Theme.Text
+    self.CloseButton.Parent = self.ControlButtons
+    
+    self.CloseButton.MouseEnter:Connect(function()
+        Utils:Tween(self.CloseButton, {ImageColor3 = Color3.fromRGB(232, 17, 35)})
+    end)
+    
+    self.CloseButton.MouseLeave:Connect(function()
+        Utils:Tween(self.CloseButton, {ImageColor3 = self.Theme.Text})
+    end)
+    
+    self.CloseButton.MouseButton1Click:Connect(function()
+        -- Анимация закрытия
+        Utils:Tween(self.MainFrame, {Size = UDim2.fromOffset(0, 0), Position = UDim2.fromScale(0.5, 0.5)}, 0.3)
+        Utils:Tween(self.DarkBackground, {BackgroundTransparency = 1}, 0.3)
+        Utils:Tween(self.Blur, {Size = 0}, 0.3)
+        
+        task.wait(0.3)
+        self.Blur:Destroy()
+        self.ScreenGui:Destroy()
+    end)
+    
+    -- Держатель вкладок (панель навигации)
     self.TabHolder = Instance.new("Frame")
     self.TabHolder.Name = "TabHolder"
     self.TabHolder.BackgroundColor3 = self.Theme.Secondary
-    self.TabHolder.Position = UDim2.fromOffset(0, 40)
-    self.TabHolder.Size = UDim2.new(0, 160, 1, -40)
+    self.TabHolder.Position = UDim2.fromOffset(0, 45)
+    self.TabHolder.Size = UDim2.new(0, 180, 1, -45)
+    self.TabHolder.ZIndex = 12
     self.TabHolder.Parent = self.MainFrame
     
     -- Скругление держателя вкладок
     local tabHolderCorner = Instance.new("UICorner")
-    tabHolderCorner.CornerRadius = UDim.new(0, 8)
+    tabHolderCorner.CornerRadius = UDim.new(0, 10)
     tabHolderCorner.Parent = self.TabHolder
     
     -- Закрываем правые углы TabHolder
@@ -295,20 +386,37 @@ function Window:Create()
     self.TabHolderCover.Name = "TabHolderCover"
     self.TabHolderCover.BackgroundColor3 = self.Theme.Secondary
     self.TabHolderCover.BorderSizePixel = 0
-    self.TabHolderCover.Position = UDim2.new(1, -8, 0, 0)
-    self.TabHolderCover.Size = UDim2.new(0, 8, 1, 0)
+    self.TabHolderCover.Position = UDim2.new(1, -10, 0, 0)
+    self.TabHolderCover.Size = UDim2.new(0, 10, 1, 0)
+    self.TabHolderCover.ZIndex = 12
     self.TabHolderCover.Parent = self.TabHolder
+    
+    -- Заголовок боковой панели
+    self.SidebarTitle = Instance.new("TextLabel")
+    self.SidebarTitle.Name = "SidebarTitle"
+    self.SidebarTitle.BackgroundTransparency = 1
+    self.SidebarTitle.Position = UDim2.fromOffset(15, 15)
+    self.SidebarTitle.Size = UDim2.new(1, -30, 0, 20)
+    self.SidebarTitle.Font = Enum.Font.GothamMedium
+    self.SidebarTitle.Text = "НАВИГАЦИЯ"
+    self.SidebarTitle.TextColor3 = self.Theme.DimText
+    self.SidebarTitle.TextSize = 12
+    self.SidebarTitle.TextXAlignment = Enum.TextXAlignment.Left
+    self.SidebarTitle.ZIndex = 13
+    self.SidebarTitle.Parent = self.TabHolder
     
     -- Скроллер вкладок
     self.TabScroller = Instance.new("ScrollingFrame")
     self.TabScroller.Name = "TabScroller"
     self.TabScroller.BackgroundTransparency = 1
-    self.TabScroller.Position = UDim2.fromOffset(0, 10)
-    self.TabScroller.Size = UDim2.new(1, 0, 1, -10)
+    self.TabScroller.Position = UDim2.fromOffset(0, 45)
+    self.TabScroller.Size = UDim2.new(1, 0, 1, -55)
     self.TabScroller.CanvasSize = UDim2.fromScale(0, 0)
-    self.TabScroller.ScrollBarThickness = 0
+    self.TabScroller.ScrollBarThickness = 2
     self.TabScroller.ScrollingDirection = Enum.ScrollingDirection.Y
     self.TabScroller.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    self.TabScroller.ZIndex = 13
+    self.TabScroller.ScrollBarImageColor3 = self.Theme.Accent
     self.TabScroller.Parent = self.TabHolder
     
     -- Список вкладок
@@ -316,29 +424,52 @@ function Window:Create()
     self.TabList.Name = "TabList"
     self.TabList.HorizontalAlignment = Enum.HorizontalAlignment.Center
     self.TabList.SortOrder = Enum.SortOrder.LayoutOrder
-    self.TabList.Padding = UDim.new(0, 10)
+    self.TabList.Padding = UDim.new(0, 8)
     self.TabList.Parent = self.TabScroller
     
     -- Отступы для вкладок
     local tabPadding = Instance.new("UIPadding")
     tabPadding.PaddingTop = UDim.new(0, 5)
-    tabPadding.PaddingBottom = UDim.new(0, 5)
-    tabPadding.PaddingLeft = UDim.new(0, 5)
-    tabPadding.PaddingRight = UDim.new(0, 5)
+    tabPadding.PaddingBottom = UDim.new(0, 10)
+    tabPadding.PaddingLeft = UDim.new(0, 8)
+    tabPadding.PaddingRight = UDim.new(0, 8)
     tabPadding.Parent = self.TabScroller
+    
+    -- Информация о библиотеке внизу боковой панели
+    self.LibraryInfo = Instance.new("TextLabel")
+    self.LibraryInfo.Name = "LibraryInfo"
+    self.LibraryInfo.BackgroundTransparency = 1
+    self.LibraryInfo.Position = UDim2.new(0, 15, 1, -30)
+    self.LibraryInfo.Size = UDim2.new(1, -30, 0, 20)
+    self.LibraryInfo.Font = Enum.Font.Gotham
+    self.LibraryInfo.Text = "Orbit UI v1.0"
+    self.LibraryInfo.TextColor3 = self.Theme.DimText
+    self.LibraryInfo.TextSize = 12
+    self.LibraryInfo.TextXAlignment = Enum.TextXAlignment.Left
+    self.LibraryInfo.TextTransparency = 0.4
+    self.LibraryInfo.ZIndex = 13
+    self.LibraryInfo.Parent = self.TabHolder
     
     -- Контейнер для вкладок
     self.TabContainer = Instance.new("Frame")
     self.TabContainer.Name = "TabContainer"
     self.TabContainer.BackgroundTransparency = 1
-    self.TabContainer.Position = UDim2.fromOffset(160, 40)
-    self.TabContainer.Size = UDim2.new(1, -160, 1, -40)
+    self.TabContainer.Position = UDim2.fromOffset(180, 45)
+    self.TabContainer.Size = UDim2.new(1, -180, 1, -45)
+    self.TabContainer.ZIndex = 12
     self.TabContainer.Parent = self.MainFrame
     
     -- Горячая клавиша для переключения видимости
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if not gameProcessed and input.KeyCode == Enum.KeyCode.RightControl then
             self.ScreenGui.Enabled = not self.ScreenGui.Enabled
+            
+            -- Обновляем эффект размытия при переключении видимости
+            if self.ScreenGui.Enabled then
+                Utils:Tween(self.Blur, {Size = 10}, 0.3)
+            else
+                Utils:Tween(self.Blur, {Size = 0}, 0.3)
+            end
         end
     end)
     
@@ -348,18 +479,20 @@ end
 
 function Window:UpdateTheme()
     -- Обновляем все элементы с темой
-    self.MainFrame.BackgroundColor3 = self.Theme.Primary
-    self.TopBar.BackgroundColor3 = self.Theme.Secondary
-    self.TopBarCover.BackgroundColor3 = self.Theme.Secondary
-    self.TitleLabel.TextColor3 = self.Theme.Text
-    self.CloseButton.ImageColor3 = self.Theme.Text
-    self.MinimizeButton.ImageColor3 = self.Theme.Text
-    self.TabHolder.BackgroundColor3 = self.Theme.Secondary
-    self.TabHolderCover.BackgroundColor3 = self.Theme.Secondary
+    if self.MainFrame then self.MainFrame.BackgroundColor3 = self.Theme.Primary end
+    if self.TopBar then self.TopBar.BackgroundColor3 = self.Theme.Secondary end
+    if self.TopBarCover then self.TopBarCover.BackgroundColor3 = self.Theme.Secondary end
+    if self.TitleLabel then self.TitleLabel.TextColor3 = self.Theme.Text end
+    if self.CloseButton then self.CloseButton.ImageColor3 = self.Theme.Text end
+    if self.MinimizeButton then self.MinimizeButton.ImageColor3 = self.Theme.Text end
+    if self.TabHolder then self.TabHolder.BackgroundColor3 = self.Theme.Secondary end
+    if self.TabHolderCover then self.TabHolderCover.BackgroundColor3 = self.Theme.Secondary end
     
     -- Обновляем кнопки вкладок
     for _, tab in pairs(self.Tabs) do
-        tab:UpdateTheme()
+        if tab.UpdateTheme then
+            tab:UpdateTheme()
+        end
     end
 end
 
@@ -380,103 +513,142 @@ function Window:AddTab(name, icon)
     tab.Window = self
     tab.Sections = {}
     
-    -- Создаем кнопку вкладки
+    -- Создаем кнопку вкладки с улучшенным дизайном
     tab.Button = Instance.new("TextButton")
     tab.Button.Name = name .. "Tab"
     tab.Button.BackgroundColor3 = self.Theme.Primary
-    tab.Button.Size = UDim2.new(1, -10, 0, 40)
+    tab.Button.BackgroundTransparency = 1
+    tab.Button.Size = UDim2.new(1, -16, 0, 44)
     tab.Button.Font = Enum.Font.GothamSemibold
     tab.Button.Text = ""
     tab.Button.AutoButtonColor = false
+    tab.Button.ZIndex = 14
     tab.Button.Parent = self.TabScroller
     
-    -- Скругление кнопки
-    local buttonCorner = Instance.new("UICorner")
-    buttonCorner.CornerRadius = UDim.new(0, 6)
-    buttonCorner.Parent = tab.Button
+    -- Контейнер для кнопки с эффектами
+    tab.ButtonContainer = Instance.new("Frame")
+    tab.ButtonContainer.Name = "ButtonContainer"
+    tab.ButtonContainer.BackgroundColor3 = self.Theme.Primary
+    tab.ButtonContainer.BackgroundTransparency = 0.6
+    tab.ButtonContainer.Size = UDim2.fromScale(1, 1)
+    tab.ButtonContainer.ZIndex = 13
+    tab.ButtonContainer.Parent = tab.Button
     
-    -- Иконка
+    -- Скругление контейнера
+    local buttonContainerCorner = Instance.new("UICorner")
+    buttonContainerCorner.CornerRadius = UDim.new(0, 8)
+    buttonContainerCorner.Parent = tab.ButtonContainer
+    
+    -- Обводка для выделенной вкладки
+    tab.ButtonStroke = Instance.new("UIStroke")
+    tab.ButtonStroke.Color = self.Theme.Accent
+    tab.ButtonStroke.Transparency = 1
+    tab.ButtonStroke.Thickness = 1.5
+    tab.ButtonStroke.Parent = tab.ButtonContainer
+    
+    -- Иконка с улучшенным дизайном
+    tab.IconContainer = Instance.new("Frame")
+    tab.IconContainer.Name = "IconContainer"
+    tab.IconContainer.BackgroundColor3 = self.Theme.Secondary
+    tab.IconContainer.BackgroundTransparency = 1
+    tab.IconContainer.Position = UDim2.fromOffset(12, 12)
+    tab.IconContainer.Size = UDim2.fromOffset(20, 20)
+    tab.IconContainer.ZIndex = 15
+    tab.IconContainer.Parent = tab.Button
+    
     tab.Icon = Instance.new("ImageLabel")
     tab.Icon.Name = "Icon"
+    tab.Icon.AnchorPoint = Vector2.new(0.5, 0.5)
     tab.Icon.BackgroundTransparency = 1
-    tab.Icon.Position = UDim2.fromOffset(10, 10)
-    tab.Icon.Size = UDim2.fromOffset(20, 20)
+    tab.Icon.Position = UDim2.fromScale(0.5, 0.5)
+    tab.Icon.Size = UDim2.fromOffset(16, 16)
+    tab.Icon.ZIndex = 15
     tab.Icon.Image = icon or "rbxassetid://9087227592"
     tab.Icon.ImageColor3 = self.Theme.DimText
-    tab.Icon.Parent = tab.Button
+    tab.Icon.Parent = tab.IconContainer
     
-    -- Название
+    -- Название с улучшенным дизайном
     tab.Title = Instance.new("TextLabel")
     tab.Title.Name = "Title"
     tab.Title.BackgroundTransparency = 1
-    tab.Title.Position = UDim2.fromOffset(40, 0)
+    tab.Title.Position = UDim2.fromOffset(42, 0)
     tab.Title.Size = UDim2.new(1, -50, 1, 0)
     tab.Title.Font = Enum.Font.GothamSemibold
     tab.Title.Text = name
     tab.Title.TextColor3 = self.Theme.DimText
     tab.Title.TextSize = 14
     tab.Title.TextXAlignment = Enum.TextXAlignment.Left
+    tab.Title.ZIndex = 15
     tab.Title.Parent = tab.Button
     
-    -- Индикатор выбора
+    -- Индикатор выбора с улучшенным дизайном
     tab.SelectionIndicator = Instance.new("Frame")
     tab.SelectionIndicator.Name = "SelectionIndicator"
     tab.SelectionIndicator.BackgroundColor3 = self.Theme.Accent
-    tab.SelectionIndicator.Position = UDim2.fromScale(0, 0.5)
+    tab.SelectionIndicator.Position = UDim2.fromOffset(0, 22)
     tab.SelectionIndicator.AnchorPoint = Vector2.new(0, 0.5)
-    tab.SelectionIndicator.Size = UDim2.new(0, 0, 0, 20)
-    tab.SelectionIndicator.Parent = tab.Button
+    tab.SelectionIndicator.Size = UDim2.new(0, 0, 0, 0)
+    tab.SelectionIndicator.ZIndex = 15
+    tab.SelectionIndicator.Parent = tab.ButtonContainer
     
+    -- Скругление индикатора
     local indicatorCorner = Instance.new("UICorner")
-    indicatorCorner.CornerRadius = UDim.new(0, 4)
+    indicatorCorner.CornerRadius = UDim.new(1, 0)
     indicatorCorner.Parent = tab.SelectionIndicator
     
-    -- Контейнер для содержимого вкладки
+    -- Контейнер для содержимого вкладки с улучшенным скроллингом
     tab.Container = Instance.new("ScrollingFrame")
     tab.Container.Name = name .. "Container"
     tab.Container.BackgroundTransparency = 1
     tab.Container.BorderSizePixel = 0
     tab.Container.Size = UDim2.fromScale(1, 1)
     tab.Container.CanvasSize = UDim2.fromScale(0, 0)
-    tab.Container.ScrollBarThickness = 4
+    tab.Container.ScrollBarThickness = 3
     tab.Container.ScrollingDirection = Enum.ScrollingDirection.Y
     tab.Container.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
     tab.Container.AutomaticCanvasSize = Enum.AutomaticSize.Y
     tab.Container.ScrollBarImageColor3 = self.Theme.Accent
+    tab.Container.ScrollBarImageTransparency = 0.5
     tab.Container.Visible = false
+    tab.Container.ZIndex = 13
     tab.Container.Parent = self.TabContainer
     
-    -- Контейнер layout
+    -- Контейнер layout с равномерными отступами
     local containerLayout = Instance.new("UIListLayout")
     containerLayout.Name = "ContainerLayout"
     containerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     containerLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    containerLayout.Padding = UDim.new(0, 10)
+    containerLayout.Padding = UDim.new(0, 15)
     containerLayout.Parent = tab.Container
     
-    -- Контейнер padding
+    -- Контейнер padding с увеличенными отступами для лучшего вида
     local containerPadding = Instance.new("UIPadding")
-    containerPadding.PaddingTop = UDim.new(0, 10)
-    containerPadding.PaddingBottom = UDim.new(0, 10)
-    containerPadding.PaddingLeft = UDim.new(0, 10)
-    containerPadding.PaddingRight = UDim.new(0, 10)
+    containerPadding.PaddingTop = UDim.new(0, 15)
+    containerPadding.PaddingBottom = UDim.new(0, 15)
+    containerPadding.PaddingLeft = UDim.new(0, 15)
+    containerPadding.PaddingRight = UDim.new(0, 15)
     containerPadding.Parent = tab.Container
     
-    -- Эффект наведения на кнопку вкладки
+    -- Эффект наведения на кнопку вкладки с плавной анимацией
     tab.Button.MouseEnter:Connect(function()
         if self.CurrentTab ~= tab then
-            Utils:Tween(tab.Button, {BackgroundColor3 = self.Theme.Secondary})
+            Utils:Tween(tab.ButtonContainer, {BackgroundTransparency = 0.2}, 0.2)
+            Utils:Tween(tab.Icon, {ImageColor3 = self.Theme.Text}, 0.2)
+            Utils:Tween(tab.Title, {TextColor3 = self.Theme.Text}, 0.2)
         end
     end)
     
     tab.Button.MouseLeave:Connect(function()
         if self.CurrentTab ~= tab then
-            Utils:Tween(tab.Button, {BackgroundColor3 = self.Theme.Primary})
+            Utils:Tween(tab.ButtonContainer, {BackgroundTransparency = 0.6}, 0.2)
+            Utils:Tween(tab.Icon, {ImageColor3 = self.Theme.DimText}, 0.2)
+            Utils:Tween(tab.Title, {TextColor3 = self.Theme.DimText}, 0.2)
         end
     end)
     
-    -- Нажатие на кнопку вкладки
+    -- Нажатие на кнопку вкладки с эффектом ripple
     tab.Button.MouseButton1Click:Connect(function()
+        Utils:Ripple(tab.ButtonContainer)
         self:SelectTab(tab)
     end)
     
@@ -491,14 +663,36 @@ function Window:AddTab(name, icon)
         section.Container = Instance.new("Frame")
         section.Container.Name = title .. "Section"
         section.Container.BackgroundColor3 = self.Window.Theme.Secondary
-        section.Container.Size = UDim2.new(1, -20, 0, 40) -- Будет изменен на основе содержимого
+        section.Container.Size = UDim2.new(1, -20, 0, 40)
         section.Container.AutomaticSize = Enum.AutomaticSize.Y
+        section.Container.ZIndex = 14
         section.Container.Parent = self.Container
+        
+        -- Добавляем тень для улучшения внешнего вида
+        local shadowEffect = Instance.new("ImageLabel")
+        shadowEffect.Name = "Shadow"
+        shadowEffect.BackgroundTransparency = 1
+        shadowEffect.Position = UDim2.fromOffset(-15, -15)
+        shadowEffect.Size = UDim2.new(1, 30, 1, 30)
+        shadowEffect.ZIndex = 13
+        shadowEffect.Image = "rbxassetid://6014261993"
+        shadowEffect.ImageColor3 = Color3.fromRGB(0, 0, 0)
+        shadowEffect.ImageTransparency = 0.5
+        shadowEffect.ScaleType = Enum.ScaleType.Slice
+        shadowEffect.SliceCenter = Rect.new(49, 49, 450, 450)
+        shadowEffect.Parent = section.Container
         
         -- Скругление контейнера
         local containerCorner = Instance.new("UICorner")
-        containerCorner.CornerRadius = UDim.new(0, 6)
+        containerCorner.CornerRadius = UDim.new(0, 8)
         containerCorner.Parent = section.Container
+        
+        -- Улучшенный вид обводки
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = self.Window.Theme.StrokeColor
+        stroke.Thickness = 1
+        stroke.Transparency = 0.5
+        stroke.Parent = section.Container
         
         -- Заголовок секции
         section.TitleLabel = Instance.new("TextLabel")
@@ -511,6 +705,7 @@ function Window:AddTab(name, icon)
         section.TitleLabel.TextColor3 = self.Window.Theme.Text
         section.TitleLabel.TextSize = 14
         section.TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+        section.TitleLabel.ZIndex = 15
         section.TitleLabel.Parent = section.Container
         
         -- Разделитель секции
@@ -519,6 +714,8 @@ function Window:AddTab(name, icon)
         section.Divider.BackgroundColor3 = self.Window.Theme.StrokeColor
         section.Divider.Position = UDim2.new(0, 15, 0, 35)
         section.Divider.Size = UDim2.new(1, -30, 0, 1)
+        section.Divider.Transparency = 0.5
+        section.Divider.ZIndex = 15
         section.Divider.Parent = section.Container
         
         -- Контейнер содержимого
@@ -528,309 +725,25 @@ function Window:AddTab(name, icon)
         section.Content.Position = UDim2.fromOffset(15, 45)
         section.Content.Size = UDim2.new(1, -30, 0, 0)
         section.Content.AutomaticSize = Enum.AutomaticSize.Y
+        section.Content.ZIndex = 15
         section.Content.Parent = section.Container
+        
+        -- Нижний отступ для секции
+        local bottomPadding = Instance.new("Frame")
+        bottomPadding.Name = "BottomPadding"
+        bottomPadding.BackgroundTransparency = 1
+        bottomPadding.Size = UDim2.new(1, 0, 0, 10)
+        bottomPadding.LayoutOrder = 9999
+        bottomPadding.ZIndex = 15
+        bottomPadding.Parent = section.Content
         
         -- Компоновка содержимого
         local contentLayout = Instance.new("UIListLayout")
         contentLayout.Name = "ContentLayout"
         contentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
         contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        contentLayout.Padding = UDim.new(0, 8)
+        contentLayout.Padding = UDim.new(0, 10)
         contentLayout.Parent = section.Content
-        
-        -- Добавляем метод для создания кнопки
-        function section:AddButton(text, callback)
-            local button = {}
-            button.Text = text
-            button.Callback = callback or function() end
-            
-            -- Создаем кнопку
-            button.Instance = Instance.new("TextButton")
-            button.Instance.Name = text .. "Button"
-            button.Instance.BackgroundColor3 = self.Tab.Window.Theme.Primary
-            button.Instance.Size = UDim2.new(1, 0, 0, 35)
-            button.Instance.Font = Enum.Font.Gotham
-            button.Instance.Text = text
-            button.Instance.TextColor3 = self.Tab.Window.Theme.Text
-            button.Instance.TextSize = 14
-            button.Instance.AutoButtonColor = false
-            button.Instance.ClipsDescendants = true
-            button.Instance.Parent = self.Content
-            
-            -- Скругление кнопки
-            local buttonCorner = Instance.new("UICorner")
-            buttonCorner.CornerRadius = UDim.new(0, 4)
-            buttonCorner.Parent = button.Instance
-            
-            -- Эффект наведения на кнопку
-            button.Instance.MouseEnter:Connect(function()
-                Utils:Tween(button.Instance, {BackgroundColor3 = self.Tab.Window.Theme.Secondary})
-            end)
-            
-            button.Instance.MouseLeave:Connect(function()
-                Utils:Tween(button.Instance, {BackgroundColor3 = self.Tab.Window.Theme.Primary})
-            end)
-            
-            -- Событие нажатия на кнопку
-            button.Instance.MouseButton1Click:Connect(function()
-                button.Callback()
-                Utils:Ripple(button.Instance)
-            end)
-            
-            -- Добавляем кнопку в элементы секции
-            table.insert(self.Elements, button)
-            
-            return button
-        end
-        
-        -- Добавляем метод для создания переключателя
-        function section:AddToggle(text, default, callback)
-            local toggle = {}
-            toggle.Text = text
-            toggle.Value = default or false
-            toggle.Callback = callback or function() end
-            
-            -- Создаем контейнер переключателя
-            toggle.Container = Instance.new("Frame")
-            toggle.Container.Name = text .. "Toggle"
-            toggle.Container.BackgroundColor3 = self.Tab.Window.Theme.Primary
-            toggle.Container.Size = UDim2.new(1, 0, 0, 35)
-            toggle.Container.Parent = self.Content
-            
-            -- Скругление контейнера
-            local containerCorner = Instance.new("UICorner")
-            containerCorner.CornerRadius = UDim.new(0, 4)
-            containerCorner.Parent = toggle.Container
-            
-            -- Надпись переключателя
-            toggle.Label = Instance.new("TextLabel")
-            toggle.Label.Name = "Label"
-            toggle.Label.BackgroundTransparency = 1
-            toggle.Label.Position = UDim2.fromOffset(10, 0)
-            toggle.Label.Size = UDim2.new(1, -60, 1, 0)
-            toggle.Label.Font = Enum.Font.Gotham
-            toggle.Label.Text = text
-            toggle.Label.TextColor3 = self.Tab.Window.Theme.Text
-            toggle.Label.TextSize = 14
-            toggle.Label.TextXAlignment = Enum.TextXAlignment.Left
-            toggle.Label.Parent = toggle.Container
-            
-            -- Фон индикатора переключателя
-            toggle.Background = Instance.new("Frame")
-            toggle.Background.Name = "Background"
-            toggle.Background.BackgroundColor3 = self.Tab.Window.Theme.Secondary
-            toggle.Background.Position = UDim2.new(1, -50, 0.5, -10)
-            toggle.Background.Size = UDim2.fromOffset(40, 20)
-            toggle.Background.Parent = toggle.Container
-            
-            -- Скругление фона
-            local backgroundCorner = Instance.new("UICorner")
-            backgroundCorner.CornerRadius = UDim.new(1, 0)
-            backgroundCorner.Parent = toggle.Background
-            
-            -- Индикатор переключателя
-            toggle.Indicator = Instance.new("Frame")
-            toggle.Indicator.Name = "Indicator"
-            toggle.Indicator.AnchorPoint = Vector2.new(0, 0.5)
-            toggle.Indicator.BackgroundColor3 = self.Tab.Window.Theme.Text
-            toggle.Indicator.Position = UDim2.new(0, 2, 0.5, 0)
-            toggle.Indicator.Size = UDim2.fromOffset(16, 16)
-            toggle.Indicator.Parent = toggle.Background
-            
-            -- Скругление индикатора
-            local indicatorCorner = Instance.new("UICorner")
-            indicatorCorner.CornerRadius = UDim.new(1, 0)
-            indicatorCorner.Parent = toggle.Indicator
-            
-            -- Функция обновления переключателя
-            function toggle:Set(value)
-                self.Value = value
-                
-                if self.Value then
-                    Utils:Tween(self.Background, {BackgroundColor3 = self.parent.Tab.Window.Theme.Accent})
-                    Utils:Tween(self.Indicator, {Position = UDim2.new(1, -18, 0.5, 0)})
-                else
-                    Utils:Tween(self.Background, {BackgroundColor3 = self.parent.Tab.Window.Theme.Secondary})
-                    Utils:Tween(self.Indicator, {Position = UDim2.new(0, 2, 0.5, 0)})
-                end
-                
-                self.Callback(self.Value)
-            end
-            
-            -- Устанавливаем родителя для функции Set
-            toggle.parent = self
-            
-            -- Инициализируем состояние переключателя
-            if toggle.Value then
-                toggle.Background.BackgroundColor3 = self.Tab.Window.Theme.Accent
-                toggle.Indicator.Position = UDim2.new(1, -18, 0.5, 0)
-            end
-            
-            -- Нажатие на переключатель
-            toggle.Container.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    toggle:Set(not toggle.Value)
-                end
-            end)
-            
-            -- Эффект наведения на контейнер
-            toggle.Container.MouseEnter:Connect(function()
-                Utils:Tween(toggle.Container, {BackgroundColor3 = self.Tab.Window.Theme.Secondary})
-            end)
-            
-            toggle.Container.MouseLeave:Connect(function()
-                Utils:Tween(toggle.Container, {BackgroundColor3 = self.Tab.Window.Theme.Primary})
-            end)
-            
-            -- Добавляем переключатель в элементы секции
-            table.insert(self.Elements, toggle)
-            
-            return toggle
-        end
-        
-        -- Добавляем метод для создания слайдера
-        function section:AddSlider(text, options, callback)
-            local slider = {}
-            slider.Text = text
-            slider.Min = options.min or 0
-            slider.Max = options.max or 100
-            slider.Value = options.default or slider.Min
-            slider.Callback = callback or function() end
-            
-            -- Создаем контейнер слайдера
-            slider.Container = Instance.new("Frame")
-            slider.Container.Name = text .. "Slider"
-            slider.Container.BackgroundColor3 = self.Tab.Window.Theme.Primary
-            slider.Container.Size = UDim2.new(1, 0, 0, 50)
-            slider.Container.Parent = self.Content
-            
-            -- Скругление контейнера
-            local containerCorner = Instance.new("UICorner")
-            containerCorner.CornerRadius = UDim.new(0, 4)
-            containerCorner.Parent = slider.Container
-            
-            -- Надпись слайдера
-            slider.Label = Instance.new("TextLabel")
-            slider.Label.Name = "Label"
-            slider.Label.BackgroundTransparency = 1
-            slider.Label.Position = UDim2.fromOffset(10, 5)
-            slider.Label.Size = UDim2.new(1, -20, 0, 20)
-            slider.Label.Font = Enum.Font.Gotham
-            slider.Label.Text = text
-            slider.Label.TextColor3 = self.Tab.Window.Theme.Text
-            slider.Label.TextSize = 14
-            slider.Label.TextXAlignment = Enum.TextXAlignment.Left
-            slider.Label.Parent = slider.Container
-            
-            -- Надпись значения
-            slider.ValueLabel = Instance.new("TextLabel")
-            slider.ValueLabel.Name = "Value"
-            slider.ValueLabel.BackgroundTransparency = 1
-            slider.ValueLabel.Position = UDim2.new(1, -50, 0, 5)
-            slider.ValueLabel.Size = UDim2.fromOffset(40, 20)
-            slider.ValueLabel.Font = Enum.Font.Gotham
-            slider.ValueLabel.Text = tostring(slider.Value)
-            slider.ValueLabel.TextColor3 = self.Tab.Window.Theme.DimText
-            slider.ValueLabel.TextSize = 14
-            slider.ValueLabel.Parent = slider.Container
-            
-            -- Фон слайдера
-            slider.Background = Instance.new("Frame")
-            slider.Background.Name = "Background"
-            slider.Background.BackgroundColor3 = self.Tab.Window.Theme.Secondary
-            slider.Background.Position = UDim2.new(0, 10, 0, 30)
-            slider.Background.Size = UDim2.new(1, -20, 0, 6)
-            slider.Background.Parent = slider.Container
-            
-            -- Скругление фона
-            local backgroundCorner = Instance.new("UICorner")
-            backgroundCorner.CornerRadius = UDim.new(1, 0)
-            backgroundCorner.Parent = slider.Background
-            
-            -- Заполнение слайдера
-            slider.Fill = Instance.new("Frame")
-            slider.Fill.Name = "Fill"
-            slider.Fill.BackgroundColor3 = self.Tab.Window.Theme.Accent
-            slider.Fill.Size = UDim2.fromScale(0, 1)
-            slider.Fill.Parent = slider.Background
-            
-            -- Скругление заполнения
-            local fillCorner = Instance.new("UICorner")
-            fillCorner.CornerRadius = UDim.new(1, 0)
-            fillCorner.Parent = slider.Fill
-            
-            -- Ползунок слайдера
-            slider.Knob = Instance.new("Frame")
-            slider.Knob.Name = "Knob"
-            slider.Knob.AnchorPoint = Vector2.new(0.5, 0.5)
-            slider.Knob.BackgroundColor3 = self.Tab.Window.Theme.Accent
-            slider.Knob.Position = UDim2.new(0, 0, 0.5, 0)
-            slider.Knob.Size = UDim2.fromOffset(12, 12)
-            slider.Knob.ZIndex = 2
-            slider.Knob.Parent = slider.Fill
-            
-            -- Скругление ползунка
-            local knobCorner = Instance.new("UICorner")
-            knobCorner.CornerRadius = UDim.new(1, 0)
-            knobCorner.Parent = slider.Knob
-            
-            -- Функция обновления слайдера
-            function slider:Set(value)
-                value = math.clamp(value, self.Min, self.Max)
-                self.Value = value
-                
-                local percent = (value - self.Min) / (self.Max - self.Min)
-                Utils:Tween(self.Fill, {Size = UDim2.fromScale(percent, 1)}, 0.1)
-                self.ValueLabel.Text = tostring(math.round(value))
-                
-                self.Callback(value)
-            end
-            
-            -- Инициализируем слайдер
-            slider:Set(slider.Value)
-            
-            -- Взаимодействие со слайдером
-            local isDragging = false
-            
-            slider.Background.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    isDragging = true
-                    local position = input.Position.X - slider.Background.AbsolutePosition.X
-                    local percent = position / slider.Background.AbsoluteSize.X
-                    local value = slider.Min + (slider.Max - slider.Min) * percent
-                    slider:Set(value)
-                end
-            end)
-            
-            slider.Background.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    isDragging = false
-                end
-            end)
-            
-            UserInputService.InputChanged:Connect(function(input)
-                if isDragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                    local position = input.Position.X - slider.Background.AbsolutePosition.X
-                    local percent = math.clamp(position / slider.Background.AbsoluteSize.X, 0, 1)
-                    local value = slider.Min + (slider.Max - slider.Min) * percent
-                    slider:Set(value)
-                end
-            end)
-            
-            -- Эффект наведения на контейнер
-            slider.Container.MouseEnter:Connect(function()
-                Utils:Tween(slider.Container, {BackgroundColor3 = self.Tab.Window.Theme.Secondary})
-            end)
-            
-            slider.Container.MouseLeave:Connect(function()
-                Utils:Tween(slider.Container, {BackgroundColor3 = self.Tab.Window.Theme.Primary})
-            end)
-            
-            -- Добавляем слайдер в элементы секции
-            table.insert(self.Elements, slider)
-            
-            return slider
-        end
         
         -- Добавляем секцию к вкладке
         table.insert(self.Sections, section)
@@ -839,7 +752,9 @@ function Window:AddTab(name, icon)
     end
     
     function tab:UpdateTheme()
-        self.Button.BackgroundColor3 = self.Window.Theme.Primary
+        self.ButtonContainer.BackgroundColor3 = self == self.Window.CurrentTab and self.Window.Theme.Accent or self.Window.Theme.Primary
+        self.ButtonContainer.BackgroundTransparency = self == self.Window.CurrentTab and 0.7 or 0.6
+        self.ButtonStroke.Transparency = self == self.Window.CurrentTab and 0 or 1
         self.Title.TextColor3 = self == self.Window.CurrentTab and self.Window.Theme.Text or self.Window.Theme.DimText
         self.Icon.ImageColor3 = self == self.Window.CurrentTab and self.Window.Theme.Text or self.Window.Theme.DimText
         self.SelectionIndicator.BackgroundColor3 = self.Window.Theme.Accent
@@ -847,15 +762,15 @@ function Window:AddTab(name, icon)
         
         -- Обновляем секции
         for _, section in pairs(self.Sections) do
-            section.Container.BackgroundColor3 = self.Window.Theme.Secondary
-            section.TitleLabel.TextColor3 = self.Window.Theme.Text
-            section.Divider.BackgroundColor3 = self.Window.Theme.StrokeColor
+            if section.Container then section.Container.BackgroundColor3 = self.Window.Theme.Secondary end
+            if section.TitleLabel then section.TitleLabel.TextColor3 = self.Window.Theme.Text end
+            if section.Divider then section.Divider.BackgroundColor3 = self.Window.Theme.StrokeColor end
             
             -- Обновляем элементы
             for _, element in pairs(section.Elements) do
                 if element.Container then
                     element.Container.BackgroundColor3 = self.Window.Theme.Primary
-                    element.Label.TextColor3 = self.Window.Theme.Text
+                    if element.Label then element.Label.TextColor3 = self.Window.Theme.Text end
                 end
                 
                 if element.Instance then
@@ -872,7 +787,12 @@ function Window:AddTab(name, icon)
                 end
                 
                 if element.Knob then
-                    element.Knob.BackgroundColor3 = self.Window.Theme.Accent
+                    element.Knob.BackgroundColor3 = self.Window.Theme.Text
+                end
+                
+                if element.ValueContainer then
+                    element.ValueContainer.BackgroundColor3 = self.Window.Theme.Secondary
+                    if element.ValueLabel then element.ValueLabel.TextColor3 = self.Window.Theme.Text end
                 end
             end
         end
@@ -892,20 +812,48 @@ end
 function Window:SelectTab(tab)
     -- Отменяем выбор текущей вкладки
     if self.CurrentTab then
-        Utils:Tween(self.CurrentTab.Button, {BackgroundColor3 = self.Theme.Primary})
-        Utils:Tween(self.CurrentTab.Title, {TextColor3 = self.Theme.DimText})
-        Utils:Tween(self.CurrentTab.Icon, {ImageColor3 = self.Theme.DimText})
-        Utils:Tween(self.CurrentTab.SelectionIndicator, {Size = UDim2.new(0, 0, 0, 20)})
-        self.CurrentTab.Container.Visible = false
+        Utils:Tween(self.CurrentTab.ButtonContainer, {BackgroundColor3 = self.Theme.Primary}, 0.3)
+        Utils:Tween(self.CurrentTab.ButtonContainer, {BackgroundTransparency = 0.6}, 0.3)
+        Utils:Tween(self.CurrentTab.ButtonStroke, {Transparency = 1}, 0.3)
+        Utils:Tween(self.CurrentTab.Title, {TextColor3 = self.Theme.DimText}, 0.3)
+        Utils:Tween(self.CurrentTab.Icon, {ImageColor3 = self.Theme.DimText}, 0.3)
+        Utils:Tween(self.CurrentTab.SelectionIndicator, {Size = UDim2.fromOffset(0, 0)}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+        
+        -- Анимация исчезновения контейнера
+        Utils:Tween(self.CurrentTab.Container, {BackgroundTransparency = 1}, 0.2)
+        task.delay(0.1, function()
+            self.CurrentTab.Container.Visible = false
+        end)
     end
     
-    -- Выбираем новую вкладку
+    -- Выбираем новую вкладку с улучшенными анимациями
     self.CurrentTab = tab
-    Utils:Tween(tab.Button, {BackgroundColor3 = self.Theme.Secondary})
-    Utils:Tween(tab.Title, {TextColor3 = self.Theme.Text})
-    Utils:Tween(tab.Icon, {ImageColor3 = self.Theme.Text})
-    Utils:Tween(tab.SelectionIndicator, {Size = UDim2.new(0, 3, 0, 20)})
+    
+    -- Анимация выбора вкладки
+    Utils:Tween(tab.ButtonContainer, {BackgroundColor3 = self.Theme.Accent}, 0.3)
+    Utils:Tween(tab.ButtonContainer, {BackgroundTransparency = 0.7}, 0.3)
+    Utils:Tween(tab.ButtonStroke, {Transparency = 0}, 0.3)
+    Utils:Tween(tab.Title, {TextColor3 = self.Theme.Text}, 0.3)
+    Utils:Tween(tab.Icon, {ImageColor3 = self.Theme.Text}, 0.3)
+    
+    -- Анимация индикатора выбора
+    tab.SelectionIndicator.Size = UDim2.fromOffset(0, 0)
     tab.Container.Visible = true
+    tab.Container.BackgroundTransparency = 1
+    
+    Utils:Tween(tab.SelectionIndicator, {Size = UDim2.fromOffset(4, 20)}, 0.4, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out)
+    Utils:Tween(tab.Container, {BackgroundTransparency = 0}, 0.3)
+    
+    -- Прокручиваем к выбранной вкладке, чтобы она была видна
+    local tabPosition = tab.Button.Position.Y.Offset
+    local viewportSize = self.TabScroller.Size.Y.Offset
+    local canvasPosition = self.TabScroller.CanvasPosition.Y
+    
+    -- Проверяем, видна ли вкладка в viewport
+    if tabPosition < canvasPosition or tabPosition + tab.Button.Size.Y.Offset > canvasPosition + viewportSize then
+        -- Прокручиваем к вкладке
+        Utils:Tween(self.TabScroller, {CanvasPosition = Vector2.new(0, tabPosition - 10)}, 0.3)
+    end
 end
 
 -- Return library
